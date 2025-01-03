@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shahriyar Ahmed Mahir - Weekly Time Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        /* Use a modern font */
+        body {
+            font-family: 'Avenir', sans-serif;
+            background: linear-gradient(to bottom, #89CFF0, #D1E8E2); /* Slightly darker blue to a soft minty color */
+            padding: 10px;
+        }
+
+
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 40px; /* Increase padding for more space */
+            padding-bottom: 20px; /* Add some space below the title */
+            background: linear-gradient(to right, #0069d9, #004085); /* Dark blue gradient */
+            color: #ffffff; /* White text color for contrast */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            font-family: 'Avenir', sans-serif;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            font-family: 'Avenir', sans-serif;
+            background: linear-gradient(to right, #0069d9, #004085);
+        }
+        
+        .main-container {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        /* Upload Section */
+        #uploadSection {
+            flex: 1;
+            min-width: 250px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            height: auto;
+        }
+
+        #uploadSection h3 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .plots-container {
+            flex-grow: 2;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        /* Section Styles */
+        .section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-8px);
+            background-color: #f9f9f9;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .section h3 {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .section p {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .section .prompt-box {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            margin-top: 0px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            box-sizing: border-box;
+            transition: border 0.3s ease;
+        }
+
+        .section .prompt-box:focus {
+            border: 1px solid #6c757d;
+        }
+
+        /* Button Styles */
+        button {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0069d9;
+            color: #fff;
+        }
+
+        /* Heading for Optimum Metrics */
+        .optimum-metrics {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.5rem;
+            text-decoration: underline;
+            color: #333;
+        }
+
+        /* Custom Styling for the metric boxes */
+        .metric-box {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .metric-box h5 {
+            text-align: center;
+            color: #333;
+        }
+
+        .metric-box p {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .full-width {
+            grid-column: 1 / -1; /* Make the element span all columns */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 id = "reportTitle">Shahriyar Ahmed Mahir - Weekly Time Report</h1>
+    </header>
+
+    <div class="main-container">
+        
+        <section id="uploadSection">
+            <h3>Upload Time Log</h3>
+            <input type="file" id="fileInput" accept=".json" class="form-control my-3">
+            <input type="text" id="weekRange" placeholder="Enter Week (e.g., 01st Jan - 07th Jan)" class="form-control my-3">
+            <button id="applyWeek" class="btn btn-primary">Apply Week</button>
+            <button id="generatePlots" class="btn btn-success mt-3" style="display: none;">Generate Plots</button>
+            <button id="downloadPDF" class="btn btn-danger mt-3">Download PDF</button>
+
+            <div class="optimum-metrics">Optimum Metrics:</div>
+
+            <div class="metric-box">
+                <h5>Time In Work</h5>
+                <p>Minimum: 2.5HRS/DAY → 17.5 HRS/WEEK<br>Maximum: 9.0HRS/DAY → 63.0 HRS/WEEK<br>Mean: 4.0HRS/DAY → 28.0 HRS/WEEK</p>
+            </div>
+
+            <div class="metric-box">
+                <h5>Proportion of Tasks</h5>
+                <p>Minimum 35%-40% Studies<br>Minimum 10% YouTube<br>Rest Varies Upon Situation</p>
+            </div>
+
+            <div class="metric-box">
+                <h5>Check In & Out</h5>
+                <p>Start Closest To 5AM-6AM<br>End Closest To 12AM-1AM</p>
+            </div>
+
+            <div class="metric-box">
+                <h5>Reporting Method</h5>
+                <p>1st Upload Converted JSON File From CSV<br>2nd Finish Prompts & Understand<br>3rd Download The File<br>4th Save The File At</p>
+            </div>
+        </section>
+
+    
+        <div class="plots-container">
+            <section class="section" id="plot1">
+                <h1>Total Time Worked:</h1>
+                <div id="plot1Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Do You Have To Work More Time? Specify (Estimated):</p>
+                <div class="input-container">
+                    <label for="hoursPerDay">A. How Many Hours/Day:</label>
+                    <textarea id="hoursPerDay" class="prompt-box" placeholder="Enter how many hours you need per day for the next week"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="totalHours">B. Total How Many Hours:</label>
+                    <textarea id="totalHours" class="prompt-box" placeholder="Enter total planned hours for this week"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="busyRestDays">C. Any Busy/Rest Days:</label>
+                    <textarea id="busyRestDays" class="prompt-box" placeholder="Enter if there are any busy or rest days"></textarea>
+                </div>
+            </section>
+        
+            <section class="section" id="plot2">
+                <h1>Proportion of Tasks</h1>
+                <div id="plot2Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="firstProportion">A. The 1st Majority Proportion:</label>
+                    <textarea id="firstProportion" class="prompt-box" placeholder="Enter the first majority proportion of tasks"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="secondProportion">B. The 2nd Majority Proportion:</label>
+                    <textarea id="secondProportion" class="prompt-box" placeholder="Enter the second majority proportion of tasks"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="thirdProportion">C. The 3rd Majority Proportion:</label>
+                    <textarea id="thirdProportion" class="prompt-box" placeholder="Enter the third majority proportion of tasks"></textarea>
+                </div>
+            </section>
+        
+            <section class="section" id="plot3">
+                <h1>Most Productive Day</h1>
+                <div id="plot3Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="whatWentWell">A. What Went Well In That Day:</label>
+                    <textarea id="whatWentWell" class="prompt-box" placeholder="Enter what went well on the most productive day"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="whyProductive">B. What Made You Do It:</label>
+                    <textarea id="whyProductive" class="prompt-box" placeholder="Enter what made you productive on that day"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="whatCanDoThisWeek">C. What Can You Do This Week:</label>
+                    <textarea id="whatCanDoThisWeek" class="prompt-box" placeholder="Enter what actions you can take this week"></textarea>
+                </div>
+            </section>
+        
+            <section class="section" id="plot4">
+                <h1>Highest & Lowest Duration Task:</h1>
+                <div id="plot4Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="feelingHighest">A. How You Were Feeling In Highest:</label>
+                    <textarea id="feelingHighest" class="prompt-box" placeholder="Enter how you were feeling during the highest duration task"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="feelingLowest">B. How You Were Feeling in Lowest:</label>
+                    <textarea id="feelingLowest" class="prompt-box" placeholder="Enter how you were feeling during the lowest duration task"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="whatToDoThisWeek">C. What One Thing You May Do This Week:</label>
+                    <textarea id="whatToDoThisWeek" class="prompt-box" placeholder="Enter one thing you can do this week based on task durations"></textarea>
+                </div>
+            </section>
+        
+            <section class="section" id="plot5">
+                <h1>Work Duration Standard Deviation</h1>
+                <div id="plot5Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="mostConsistent">A. Most Consistent & Why:</label>
+                    <textarea id="mostConsistent" class="prompt-box" placeholder="Enter the most consistent task and why"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="leastConsistent">B. Least Consistent & Why:</label>
+                    <textarea id="leastConsistent" class="prompt-box" placeholder="Enter the least consistent task and why"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="planReflection">C. What Plan/Finding/Reflection You Have:</label>
+                    <textarea id="planReflection" class="prompt-box" placeholder="Enter your plan or reflection on the work duration"></textarea>
+                </div>
+            </section>
+        
+            <section class="section" id="plot6">
+                <h1>Check-In and Check-Out and Break Times</h1>
+                <div id="plot6.1Div"></div>
+                <div id="plot6.2Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="planBeEarly">A. If 'How' Are You Planning To Be Early at Both:</label>
+                    <textarea id="planBeEarly" class="prompt-box" placeholder="Enter how you plan to be early for both check-in and check-out"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="highestBreak">B. What Was Your Highest Break Time:</label>
+                    <textarea id="highestBreak" class="prompt-box" placeholder="Enter the highest break time you took"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="improveBreak">C. Can You Do Better With A Lesser/Greater Breaktime + Consistency:</label>
+                    <textarea id="improveBreak" class="prompt-box" placeholder="Enter how you can improve break time management and consistency"></textarea>
+                </div>
+            </section>
+        
+            <section class="section full-width" id="plot7">
+                <h1>Daily Hours Worked</h1>
+                <div id="plot7Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="fluctuation">A. Is there Heavy or Light Fluctuation:</label>
+                    <textarea id="fluctuation" class="prompt-box" placeholder="Enter if you notice heavy or light fluctuation in daily hours"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="causeFluctuation">B. What Caused A Deep/Steep if It Exists:</label>
+                    <textarea id="causeFluctuation" class="prompt-box" placeholder="Enter what caused any significant fluctuation in work hours"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="happyTrend">C. Are You Happy With The Trend?:</label>
+                    <textarea id="happyTrend" class="prompt-box" placeholder="Enter if you are happy with the trend of your daily work hours"></textarea>
+                </div>
+            </section>
+        </div>
+        
+
+
+
+
+
+
+
+    </div>   
+
+
+    <script>
+        
+        document.getElementById('downloadPDF').addEventListener('click', async () => {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            
+            const content = document.body; // Capture the entire page
+            const canvas = await html2canvas(content, {
+                scale: 2, // Adjust scaling factor for quality (higher = better quality, larger size)
+                useCORS: true // Ensures proper cross-origin handling
+            });
+            
+            const imgData = canvas.toDataURL('image/jpeg', 0.5); // Use JPEG and set quality to 0.7 (lower quality reduces size)
+
+            const imgWidth = 210; // A4 width in mm
+            const pageHeight = 297; // A4 height in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+
+            let position = 0;
+            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight); // Use JPEG format
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            const currentDate = new Date();
+            const formattedDate = currentDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            pdf.save(`Mahir TimeLog Report - ${formattedDate}.pdf`);
+
+        });
+
+    </script>
+
+
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const generatePlotsButton = document.getElementById('generatePlots');
+
+        let jsonData = null; // Variable to store JSON data
+
+        
+
+        // Event listener to load JSON data from the file input
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file && file.type === 'application/json') {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    jsonData = JSON.parse(e.target.result); // Parse and store the JSON data
+                    console.log("Loaded JSON Data:", jsonData); // Log the loaded data for debugging
+                };
+                reader.readAsText(file);
+            } else {
+                alert("Please upload a valid JSON file.");
+            }
+        });
+
+        // When the "Generate Plots" button is clicked
+        generatePlotsButton.addEventListener('click', () => {
+            if (!jsonData || jsonData.length === 0) {
+                console.error("No data loaded.");
+                return; // Do nothing if no data is loaded
+            }
+
+            const gaps = []; // Array to store gaps between tasks
+
+            // Sort jsonData by unix_begin to ensure tasks are ordered
+            jsonData.sort((a, b) => a.unix_begin - b.unix_begin);
+
+            // Loop through jsonData using forEach to calculate gaps between consecutive tasks
+            jsonData.forEach((entry, index) => {
+                if (index < jsonData.length - 1) {
+                    const currentEnd = entry.unix_end;
+                    const nextEntry = jsonData[index + 1]; // Next task
+                    const nextBegin = nextEntry.unix_begin;
+
+                    // Calculate gap in hours
+                    const gap = (nextBegin - currentEnd) / 3600; // Gap in hours
+
+                    // Only consider gaps <= 5 hours
+                    if (gap <= 5) {
+                        gaps.push(gap); // Store valid gap
+                    }
+                }
+            });
+
+            // Smooth the gaps data
+            const smoothedGaps = smoothData(gaps);
+
+            // Plot the smoothed gaps
+            plotGapTimes(smoothedGaps);
+        });
+
+        // Function to smooth data using a simple rolling average (window size of 5)
+        function smoothData(data) {
+            const smoothed = [];
+            const windowSize = 5; // Window size for smoothing
+
+            for (let i = 0; i < data.length; i++) {
+                const start = Math.max(0, i - windowSize + 1);
+                const window = data.slice(start, i + 1);
+                const avg = window.reduce((sum, value) => sum + value, 0) / window.length;
+                smoothed.push(avg);
+            }
+
+            return smoothed;
+        }
+
+        // Function to plot the gaps using Plotly in div (id = plot6.2Div)
+        function plotGapTimes(gaps) {
+            const layout = {
+                title: 'Break Times',
+                xaxis: {
+                    title: 'Task Index',
+                },
+                yaxis: {
+                    title: 'Gap (hours)',
+                    rangemode: 'tozero',
+                }
+            };
+
+            const data = [{
+                x: Array.from({ length: gaps.length }, (_, i) => `Gap ${i + 1}`), // X-axis as task index
+                y: gaps,
+                type: 'scatter',
+                mode: 'lines+markers',
+                line: { shape: 'spline', smoothing: 0.7, color: 'rgb(75, 192, 192)' },
+                marker: { color: 'rgb(75, 192, 192)' },
+            }];
+
+            Plotly.newPlot('plot6.2Div', data, layout);
+        }
+
+        // Event listener to load JSON data from the file input
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file && file.type === 'application/json') {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    jsonData = JSON.parse(e.target.result); // Parse and store the JSON data
+                    console.log("Loaded JSON Data:", jsonData); // Log the loaded data for debugging
+                };
+                reader.readAsText(file);
+            } else {
+                alert("Please upload a valid JSON file.");
+            }
+        });
+
+
+
+
+
+
+        // When the "Generate Plots" button is clicked
+        generatePlotsButton.addEventListener('click', () => {
+            if (!jsonData || jsonData.length === 0) {
+                console.error("No data loaded.");
+                return; // Do nothing if no data is loaded
+            }
+
+            // Create an object to store task durations
+            const taskDurations = {};
+
+            // Loop through jsonData using forEach to collect durations for each task
+            jsonData.forEach((entry) => {
+                const task = entry.task || 'Unknown'; // Get task name
+                const duration = entry.duration_decimal || 0; // Get task duration
+
+                // If task is not in taskDurations, initialize an empty array
+                if (!taskDurations[task]) {
+                    taskDurations[task] = [];
+                }
+
+                // Push the duration to the task's array
+                taskDurations[task].push(duration);
+            });
+
+            // Calculate the standard deviation for each task
+            const taskStdDevs = {};
+            Object.keys(taskDurations).forEach((task) => {
+                const durations = taskDurations[task];
+                const mean = durations.reduce((sum, value) => sum + value, 0) / durations.length;
+                const variance = durations.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / durations.length;
+                const stdDev = Math.sqrt(variance);
+                taskStdDevs[task] = stdDev;
+            });
+
+            // Prepare data for the bar plot
+            const tasks = Object.keys(taskStdDevs);
+            const stdDevs = tasks.map(task => taskStdDevs[task]);
+
+            // Plot the task duration consistency (standard deviation)
+            plotTaskDurationConsistency(tasks, stdDevs);
+        });
+
+        // Function to plot the task duration consistency using Plotly in div (id = 5.2plotDiv)
+        function plotTaskDurationConsistency(tasks, stdDevs) {
+            const layout = {
+                title: 'Task Duration Consistency',
+                xaxis: {
+                    title: 'Task',
+                    tickangle: 45
+                },
+                yaxis: {
+                    title: 'Standard Deviation of Duration',
+                    rangemode: 'tozero',
+                },
+                showlegend: false
+            };
+
+            const data = [{
+                x: tasks,
+                y: stdDevs,
+                type: 'bar',
+                marker: { color: 'rgb(54, 162, 235)' },
+            }];
+
+            Plotly.newPlot('plot5Div', data, layout);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Apply week range to the title
+        // document.getElementById('applyWeek').addEventListener('click', () => {
+        //     const weekRange = document.getElementById('weekRange').value;
+        //     const reportTitle = document.getElementById('reportTitle');
+        //     reportTitle.textContent = `Shahriyar Ahmed Mahir - Weekly Report (${weekRange})`;
+        // });
+
+        
+        // Handle file upload
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    jsonData = JSON.parse(reader.result); // Store the JSON data
+                    generatePlotsButton.style.display = 'block'; // Show the "Generate Plots" button
+                };
+                reader.readAsText(file);
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+        // Generate plots from the JSON data
+        generatePlotsButton.addEventListener('click', () => {
+            if (!jsonData) return; // Do nothing if no data is loaded
+
+            const taskDurations = {};
+            const dailyTotals = {};
+            let totalDuration = 0;
+            const taskCounts = {};
+            const hourlyBreakdown = Array(24).fill(0);
+            const dailyHours = {}; // To store daily totals for Plot 3
+            let highestTaskDuration = { task: '', duration: 0 }; // For Plot 4
+            let lowestTaskDuration = { task: '', duration: Infinity }; // For Plot 4
+            let earliestCheckIn = null;
+            let latestCheckOut = null;
+
+
+            // Define time ranges in seconds
+            const EARLY_START = 5 * 3600;  // 5:00 AM
+            const EARLY_END = 13 * 3600;   // 1:00 PM
+            const LATE_START = 0.1 * 3600; //   12:00 AM
+            const LATE_END = 4 * 3600;     // 4:00 AM
+
+            // Helper function to parse time string with AM/PM into seconds since midnight
+            function timeToSeconds(timeStr) {
+                const timeParts = timeStr.match(/(\d+):(\d+)\s?(AM|PM)/i);
+                if (!timeParts) return null; // Return null if the time format is invalid
+
+                let [_, hours, minutes, period] = timeParts;
+                hours = parseInt(hours, 10);
+                minutes = parseInt(minutes, 10);
+
+                // Convert to 24-hour format
+                if (period.toUpperCase() === "PM" && hours !== 12) {
+                    hours += 12;
+                } else if (period.toUpperCase() === "AM" && hours === 12) {
+                    hours = 0;
+                }
+
+                return hours * 3600 + minutes * 60;
+            }
+
+            
+
+//TODO:
+
+
+
+
+            // Process JSON data
+            jsonData.forEach(entry => {
+                const task = entry.task || 'Unknown';
+                const duration = entry.duration_decimal || 0;
+                const date = entry.date;
+                const begin = entry.begin;
+                const end = entry.end;
+                const unixBegin = entry.unix_begin;
+                const unixEnd = entry.unix_end;
+                const checkInSeconds = timeToSeconds(entry.begin);
+                const checkOutSeconds = timeToSeconds(entry.end);
+
+
+                // Total duration
+                totalDuration += duration;
+
+                // Task durations
+                taskDurations[task] = (taskDurations[task] || 0) + duration;
+
+                // Daily totals
+                dailyTotals[date] = (dailyTotals[date] || 0) + duration;
+                dailyHours[date] = (dailyHours[date] || 0) + duration;
+
+                // Highest task duration
+                if (duration > highestTaskDuration.duration) {
+                    highestTaskDuration = { task, duration };
+                }
+
+                // Lowest task duration (simplified)
+
+                // If the current task duration is lower than the stored lowest duration, update
+                if (duration < lowestTaskDuration.duration) {
+                    lowestTaskDuration = { task, duration };
+                }
+
+             
+        
+                if (checkInSeconds === null || checkOutSeconds === null) {
+                    console.error(`Invalid time format for entry:`, entry);
+                    return; // Skip this entry if times are invalid
+                }
+
+                // Early Check-In Logic
+                if (checkInSeconds >= EARLY_START && checkInSeconds <= EARLY_END) {
+                    if (earliestCheckIn === null || checkInSeconds < earliestCheckIn) {
+                        earliestCheckIn = checkInSeconds;
+                    }
+                }
+
+                // Late Check-Out Logic
+                if (checkOutSeconds >= LATE_START && checkOutSeconds <= LATE_END) {
+                    if (latestCheckOut === null || checkOutSeconds > latestCheckOut) {
+                        latestCheckOut = checkOutSeconds;
+                    }
+                }
+                    
+        
+
+
+
+            });
+
+            // Plot 1: Total Time Worked
+            const minDuration = 17.5; // Minimum in hours
+            const maxDuration = 63.0; // Maximum in hours
+            const meanDuration = 28.0; // Mean in hours
+            const tolerance = 4; // ±4 hours for the mean
+
+            // Calculate the total duration (assuming it's already defined somewhere)
+            const totalDurations = 30.0; // Example, replace with your actual totalDuration calculation
+
+            // Determine where the totalDuration falls
+            let statusMessage = '';
+
+            if (totalDurations < minDuration) {
+                statusMessage = 'Under Minimum Duration';
+            } else if (totalDurations > maxDuration) {
+                statusMessage = 'Over Maximum Duration';
+            } else if (totalDurations >= (meanDuration - tolerance) && totalDurations <= (meanDuration + tolerance)) {
+                statusMessage = 'Within Mean Range';
+            } else {
+                statusMessage = 'Outside of Mean Range';
+            }
+
+            document.getElementById('plot1Div').innerHTML = `<h2><span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">${totalDuration.toFixed(2)} Hours </span></h2><h3><br>(${statusMessage})</h3>`;
+
+
+
+            // Plot 2: Proportion of Tasks
+            const taskNames = Object.keys(taskDurations);
+            const taskValues = Object.values(taskDurations);
+            Plotly.newPlot('plot2Div', [{
+                labels: taskNames,
+                values: taskValues,
+                type: 'pie',
+                marker: { colors: ['orange', 'green', 'red', 'purple', 'blue'] }
+            }], { 
+                title: 'Proportion of Tasks', 
+                responsive: true,
+                width: 400, // Adjust the width as needed
+                height: 400 // Adjust the height as needed
+            });
+
+
+            
+            // Plot 3: Most Productive Day
+            // const dailyLabels = Object.keys(dailyHours);
+            // const dailyValues = Object.values(dailyHours);
+            // Plotly.newPlot('plot3Div', [{
+            //     x: dailyLabels,
+            //     y: dailyValues,
+            //     type: 'bar',
+            //     marker: { color: 'teal' }
+            // }], { title: 'Most Productive Day', responsive: true });
+
+            // Find the most productive day
+            const mostProductiveDay = Object.keys(dailyHours).reduce((maxDay, currentDay) => 
+                dailyHours[currentDay] > (dailyHours[maxDay] || 0) ? currentDay : maxDay, 
+                null
+            );
+
+            const mostProductiveDayHours = dailyHours[mostProductiveDay];
+
+            // Filter tasks for the most productive day
+            const taskDurationsForDay = {};
+            jsonData.forEach(entry => {
+                if (entry.date === mostProductiveDay) {
+                    const task = entry.task || 'Unknown';
+                    const duration = entry.duration_decimal || 0;
+                    taskDurationsForDay[task] = (taskDurationsForDay[task] || 0) + duration;
+                }
+            });
+
+            // --- Prepare data for the pie chart
+            const tasksForDay = Object.keys(taskDurationsForDay);
+            const taskHoursForDay = Object.values(taskDurationsForDay);
+
+            // --- Display total hours worked and pie chart
+            document.getElementById('plot3Div').innerHTML = `
+                <div style="margin-bottom: 3px;">
+                    <h2><span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">${mostProductiveDay}</span></h2>
+                <p> </p>
+                <h3><span style = "
+
+                background: linear-gradient(to right, #dc3545, #8b0000);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Total Hours Worked: ${mostProductiveDayHours.toFixed(2)} Hours</span></h3>
+                </div>
+                <div id="mostProductiveDayPieChart" style="height: 350px; position: relative; overflow: hidden;"></div>
+
+            `;
+
+            document.querySelector('head').insertAdjacentHTML('beforeend', `
+                <style>
+                    #plot3Div {
+                        padding-bottom: 5px; /* Reduced padding at the bottom of the plot container */
+                    }
+
+                    #plot3Div .prompt-box {
+                        margin-top: 5px; /* Maintain a small margin at the top of the text box */
+                        margin-bottom: 0;  /* Remove the bottom margin to reduce the gap */
+                    }
+
+                    #plot3Div p {
+                        margin-top: 0; /* Ensure no extra margin on top of the paragraph */
+                        margin-bottom: 0px; /* Reduced space from the next element */
+                    }
+                </style>
+            `);
+
+
+            Plotly.newPlot('mostProductiveDayPieChart', [{
+                labels: tasksForDay,
+                values: taskHoursForDay,
+                type: 'pie',
+                marker: { colors: ['orange', 'green', 'red', 'purple', 'blue'] }
+            }], { 
+                title: `Proportion of Work on ${mostProductiveDay}`, 
+                responsive: true
+            });
+
+
+
+            Plotly.newPlot('plot3Div', [{
+                labels: tasksForDay,
+                values: taskHoursForDay,
+                type: 'pie',
+                marker: { colors: ['orange', 'green', 'red', 'purple', 'blue'] }
+            }], { 
+                title: `Proportion of Work on ${mostProductiveDay}`, 
+                responsive: true    
+            });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // Plot 4: Highest Duration of Work
+            document.getElementById('plot4Div').innerHTML = `<h2><span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">${highestTaskDuration.task} - ${highestTaskDuration.duration.toFixed(2)} Hours </span></h2><p></p><h2> <span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">${lowestTaskDuration.task} - ${lowestTaskDuration.duration.toFixed(2)} Hour </span></h2><br>`;
+
+            // Plot 5: Work Efficiency
+        
+
+
+
+            // Plot 6: Earliest Check-In and Latest Check-Out
+            // Convert final times back to HH:mm:ss format for display
+            // Convert results back to HH:mm:ss format for display
+            function secondsToTime(seconds) {
+                const hrs = Math.floor(seconds / 3600) % 24;
+                const mins = Math.floor((seconds % 3600) / 60);
+                return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+            }
+
+            // Display the results
+            const earliestTime = earliestCheckIn !== null ? secondsToTime(earliestCheckIn) : "Not Found";
+            const latestTime = latestCheckOut !== null ? secondsToTime(latestCheckOut) : "Not Found";
+
+
+
+
+            document.getElementById('plot6.1Div').innerHTML = `<h2><span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Earliest Check-In: ${earliestTime}</span></h2><p></p><h2> <span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Latest Check-Out: ${latestTime}</span></h2><br>
+                
+            `;
+
+
+
+
+
+
+
+            // Plot 7: Daily Hours Worked
+            const dailyLabels = Object.keys(dailyHours); // x values (e.g., dates)
+            const dailyValues = Object.values(dailyHours); // y values (e.g., hours worked)
+
+            Plotly.newPlot('plot7Div', [{
+                x: dailyLabels,
+                y: dailyValues,
+                type: 'scatter',
+                mode: 'lines+markers',
+                line: { shape: 'spline' }
+            }], { title: 'Daily Hours Worked', responsive: true });
+        });
+
+
+
+
+
+
+
+
+
+        // -----
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the required elements
+            const applyWeekButton = document.getElementById('applyWeek');
+            const weekRangeInput = document.getElementById('weekRange');
+            const reportTitle = document.getElementById('reportTitle');
+
+            console.log(applyWeekButton); // Check if the button is correctly selected
+            console.log(weekRangeInput); // Check if the input field is selected
+            console.log(reportTitle); // Check if the title element is selected
+
+
+            // Check if elements exist
+            if (!applyWeekButton || !weekRangeInput || !reportTitle) {
+                console.error("One or more required elements are missing in the HTML.");
+                return;
+            }
+
+            // Add the event listener for the Apply Week button
+            applyWeekButton.addEventListener('click', () => {
+                const weekRange = weekRangeInput.value.trim(); // Get and trim input value
+                console.log("Week range: ", weekRange); // Debugging: Check value of weekRange
+                if (!weekRange) {
+                    alert("Please enter a valid week range!");
+                    return;
+                }
+
+                // Update the title with the week range
+                reportTitle.textContent = `Shahriyar Ahmed Mahir - Weekly Time Report (${weekRange})`;
+                console.log(`Week range applied: ${weekRange}`); // Debugging log
+            });
+
+
+            // Initial setup for the title (without using weekRange here)
+            reportTitle.style.display = "none"; // Hide element temporarily
+            reportTitle.offsetHeight; // Trigger reflow
+            reportTitle.style.display = ""; // Show element again
+        });
+
+
+
+
+
+        // TODO:
+    </script>
+
+</body>
+</html>

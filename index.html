@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahir & Nabiha LifeOS KPI Metric & Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Avenir', sans-serif;
+            background: linear-gradient(to bottom, #5CB1D9, #A1D9D0); /* Slightly more muted gradient */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ensures minimum height is the viewport height */
+            margin: 0;
+            flex-direction: column;
+            text-align: center;
+            overflow-y: auto; /* Allows vertical scrolling */
+        }
+
+        /* Title Style */
+        .page-title {
+            font-size: 4.2rem; /* Keeping the original size */
+            color: #d7e5f3;
+            font-weight: bold;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            padding: 10px 30px; /* Reduced padding for a more contained background */
+            background: linear-gradient(to right, #0069d9, #004085); /* Slight blue background */
+            border-radius: 25px; /* Reduced border-radius for a subtler rounded effect */
+            display: inline-block; /* Ensures the background fits the text */
+            box-shadow: 0 4px 10px rgba(0, 105, 217, 0.3); /* Slight shadow for a sleek look */
+        }
+
+        .container {
+            padding-top: 15px; /* Add spacing to the container */
+        }
+
+
+        /* Current Date and Day */
+        .current-date {
+            font-size: 3rem; /* Smaller size for coherence */
+            color: #003366;
+            font-weight: bold;
+            margin-bottom: 1px;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .current-date:hover {
+            color: #004085;
+        }
+
+        /* Current Week */
+        .current-week {
+            font-size: 1.8rem;
+            color: #004085;
+            font-weight: normal;
+            margin-bottom: 10px;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .current-week:hover {
+            color: #0069d9;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .central-container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 600px;
+            min-height: 400px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .central-container:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Profile Picture Frame */
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid #0069d9;
+            margin-bottom: 20px;
+            object-fit: cover; /* Ensures the image covers the circular frame */
+        }
+
+        /* Subtitle Style */
+        h2 {
+            font-size: 1.5rem;
+            color: #0069d9;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        /* Button Styles */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        .btn {
+            padding: 20px 40px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            background-color: #0069d9;
+            border: none;
+            border-radius: 50px;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0, 105, 217, 0.2);
+        }
+
+        .btn:hover {
+            background-color: #004085;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 105, 217, 0.4);
+        }
+
+        /* Click Me Links Container */
+        .click-me-container {
+            display: flex;
+            justify-content: center; /* Center the links horizontally */
+            gap: 20px; /* Space between the links */
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* "Click Me" Link Style */
+        .click-me {
+            font-size: 1rem;
+            color: #0069d9;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            padding: 10px 20px; /* Add padding for a better clickable area */
+            border-radius: 50px; /* Rounded corners */
+            background-color: rgba(0, 105, 217, 0.1); /* Light blue background */
+        }
+
+        .click-me:hover {
+            text-decoration: underline;
+            color: #004085;
+            background-color: rgba(0, 105, 217, 0.2); /* Slightly darker background on hover */
+        }
+
+
+        /* Responsiveness for small screens */
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+            }
+
+            .btn-container {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .main-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <!-- Title for Page -->
+    <div class="page-title">LifeOS KPI Metric & Report</div>
+
+    <!-- Current Day and Date -->
+    <div class="current-date" id="currentDate"></div>
+
+    <!-- Current Week -->
+    <div class="current-week" id="currentWeek"></div>
+
+    <!-- Main Container with Two Boxes -->
+    <div class="main-container">
+        <!-- Box 1 for Shahriyar Ahmed Mahir -->
+        <div class="central-container">
+            <!-- Circular Profile Picture -->
+            <img src="mahir_pic_lifeos.png" alt="Shahriyar Ahmed Mahir" class="profile-picture">
+
+            <h2>Shahriyar Ahmed Mahir</h2>
+
+            <div class="btn-container" style="margin-bottom: 10px;">
+                <a href="mahir_timelog.html" class="btn">Time Report</a>
+                <a href="mahir_lifeos_kpi.html" class="btn">KPI Report</a>
+            </div>
+            <div class="btn-container">
+                <a href="https://studio.youtube.com/channel/UCe4rooMe63Op6RV66WRAvvQ/analytics/tab-overview/period-default" class="btn">Business Report</a>
+            </div>
+        </div>
+
+        <!-- Box 2 for Nabiha Jannat Kalam -->
+        <div class="central-container">
+            <!-- Circular Profile Picture -->
+            <img src="nabiha_pic_lifeos.png" alt="Nabiha Jannat Kalam" class="profile-picture">
+
+            <h2>Nabiha Jannat Kalam</h2>
+
+            <div class="btn-container">
+                <a href="nabiha_timelog.html" class="btn">Time Report</a>
+                <a href="nabiha_lifeos_kpi.html" class="btn">KPI Report</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Click Me Link -->
+    <!-- Click Me Links Container -->
+    <div class="click-me-container">
+        <a target="_blank" href="https://csvjson.com/csv2json" class="click-me">CSV TO JSON</a>
+        <a target="_blank" href="https://www.notion.so/16d7bab5b77c80058e5ee6b66e01e2b9?v=16d7bab5b77c80a8a685000c36f711fd&pvs=4" class="click-me">File Repository</a>
+        <a target="_blank" href="TimerAppForLifeOS.zip" class="click-me" onclick="downloadFile('TimerAppForLifeOS.zip', 'TimerAppForLifeOS.zip')">Customer Timer App</a>
+
+    <!-- Script to show current day, date, and current week -->
+    <script>
+
+        function downloadFile(filePath, fileName) {
+            const a = document.createElement('a');
+            a.href = filePath; // File path relative to the current HTML file
+            a.download = fileName; // Forces the download with the specified name
+            document.body.appendChild(a); // Append the link to the DOM
+            a.click(); // Trigger the download programmatically
+            document.body.removeChild(a); // Clean up by removing the link
+        }
+
+        const currentDate = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        
+        // Display Current Date
+        document.getElementById('currentDate').textContent = currentDate.toLocaleDateString('en-US', options);
+        
+        // Calculate the start of the current week (7 days before)
+        const startOfWeek = new Date(currentDate);
+        startOfWeek.setDate(currentDate.getDate() - 6);  // Subtract 6 days to get the start of the week
+
+        // Format dates
+        const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+        const startWeekStr = startOfWeek.toLocaleDateString('en-US', dateOptions);
+        const endWeekStr = currentDate.toLocaleDateString('en-US', dateOptions);
+        
+        // Display Current Week Range
+        document.getElementById('currentWeek').textContent = `Current Week: ${startWeekStr} - ${endWeekStr}`;
+
+    </script>
+
+</body>
+</html>

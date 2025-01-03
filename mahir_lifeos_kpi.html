@@ -1,0 +1,2299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shahriyar Ahmed Mahir  - LifeOS Weekly Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+
+        /* Use a modern font */
+        body {
+            font-family: 'Avenir', sans-serif;
+            background: linear-gradient(to bottom, #89CFF0, #D1E8E2); /* Slightly darker blue to a soft minty color */
+            padding: 10px;
+        }
+
+
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 40px; /* Increase padding for more space */
+            padding-bottom: 20px; /* Add some space below the title */
+            background: linear-gradient(to right, #0069d9, #004085); 
+            color: #ffffff; /* White text color for contrast */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            font-family: 'Avenir', sans-serif;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            font-family: 'Avenir', sans-serif;
+            
+        }
+
+        .main-container {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        /* Upload Section */
+        #uploadSection {
+            flex: 0 1 auto; /* Prevent it from growing unnecessarily */
+            max-width: 300px; /* Set a maximum width */
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            height: auto
+        }
+
+        #uploadSection h3 {
+            
+            flex: 1;
+            min-width: 250px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            height: auto;
+
+        }
+
+        .plots-container {
+            flex-grow: 2;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        /* Section Styles */
+        .section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-8px);
+            background-color: #f9f9f9;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .section h3 {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .section p {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 2px;
+        }
+
+        .section .prompt-box {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            margin-top: 0px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            box-sizing: border-box;
+            transition: border 0.3s ease;
+        }
+
+        .section .prompt-box:focus {
+            border: 1px solid #6c757d;
+        }
+
+        /* Button Styles */
+        button {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+
+
+
+
+
+        h4 {
+            text-align: center;
+        }
+
+        button:hover {
+            background-color: #0069d9;
+            color: #fff;
+        }
+
+        /* Heading for Optimum Metrics */
+        .optimum-metrics {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.5rem;
+            text-decoration: underline;
+            color: #333;
+            font-size: 1.25rem;
+        }
+
+
+        /* Custom Styling for the metric boxes */
+        .metric-box {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            font-size: 1.25rem;
+        }
+
+        .metric-box h4 {
+            text-align: center;
+            color: #333;
+            font-size: 1.25rem;
+        }
+
+        .metric-box p {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .full-width {
+            grid-column: 1 / -1; /* Make the element span all columns */
+        }
+
+
+        #inputSection {
+            display: block;
+            
+        }
+        #outputSection {
+            display: block;
+            margin-top: 20px;
+        }
+        #inputSection.hidden {
+            display: none;
+        }
+
+
+            /* Ensure buttons are the same height, padding, and aligned */
+        .button-container {
+            display: flex;
+            gap: 07px; /* Space between buttons */
+            margin-top: 20px; /* Add spacing above buttons */
+            margin-bottom: 20px;
+        }
+
+        .button-container button {
+            height: 45px; /* Set consistent height */
+            padding: 10px 20px; /* Ensure padding is equal */
+            font-size: 16px; /* Consistent font size */
+            border-radius: 5px; /* Rounded corners */
+            border: none; /* Remove default borders */
+            cursor: pointer; /* Pointer cursor for buttons */
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background-color: #007bff; /* Bootstrap primary color */
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker shade on hover */
+        }
+
+        .btn-success {
+            background-color: #28a745; /* Bootstrap success color */
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background-color: #218838; /* Darker shade on hover */
+        }
+
+
+
+
+
+
+        
+        
+        
+        
+        h4 {
+            text-align: center;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 40px; /* Increase padding for more space */
+            padding-bottom: 20px; /* Add some space below the title */
+            background: linear-gradient(to right, #0069d9, #004085); 
+            color: #ffffff; /* White text color for contrast */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            font-family: 'Avenir', sans-serif;
+        }
+        input::placeholder {
+            font-size: 12px; /* Set the font size for the placeholder text */
+            color: #888; /* Optional: Change placeholder text color */
+            
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 id = "reportTitle">Shahriyar Ahmed Mahir - LifeOS Weekly Report</h1>
+    </header>
+
+    <div class="main-container">
+        
+        <section id="uploadSection">
+            <div id="inputSection">
+                <form id="dataForm">
+                    <h3>Enter Your Data</h3>
+        
+                    <div id="fieldSection" class = 'button-container'>
+                        <label for="total_time_worked">Total Time Worked:</label>
+                        <input type="text" id="total_time_worked" name="Total Time Worked" placeholder="Your MOm"><br><br>
+                
+                        <label for="tt_last_week">Total Time Last Week:</label>
+                        <input type="text" id="tt_last_week" name="Total Time Last Week"><br><br>
+                
+                        <label for="largest_duration_of_work">Largest Duration Of Work:</label>
+                        <input type="text" id="largest_duration_of_work" name="Largest Duration Of Work"><br><br>
+                
+                        <label for="largest_duration_of_work_last_week">Largest Duration of Work Last Week:</label>
+                        <input type="text" id="largest_duration_of_work_last_week" name="Largest Duration of Work Last Week"><br><br>
+                
+                        <label for="earliest_start">Earliest Start Of Working:</label>
+                        <input type="text" id="earliest_start" name="Earliest Start Of Working"><br><br>
+
+                        <label for="earliest_start_last_week">Earliest Start Of Working Last Week:</label>
+                        <input type="text" id="earliest_start_last_week" name="Earliest Start Of Working Last Week"><br><br>
+                
+                        <label for="most_final_time">Most Final Time Of Working:</label>
+                        <input type="text" id="most_final_time" name="Most Final Time Of Working"><br><br>
+
+                        <label for="most_final_time_last_week">Most Final Time Of Working Last Week:</label>
+                        <input type="text" id="most_final_time_last_week" name="Most Final Time Of Working Last Week"><br><br>
+
+                        <label for="total_screen_time">Total Screen Time:</label>
+                        <input type="text" id="total_screen_time" name="Total Screen Time"><br><br>
+                
+                        <label for="productive_screen_time">Productive Screen Time:</label>
+                        <input type="text" id="productive_screen_time" name="Productive Screen Time"><br><br>
+                
+                        <label for="social_screen_time">Social Screen Time:</label>
+                        <input type="text" id="social_screen_time" name="Social Screen Time"><br><br>
+                
+                        <label for="total_screen_last_week">Total Screen Time Last Week:</label>
+                        <input type="text" id="total_screen_last_week" name="Total Screen Time Last Week"><br><br>
+                
+                        <label for="productive_screen_time_last_week">Productive Screen Time from Last Week:</label>
+                        <input type="text" id="productive_screen_time_last_week" name="Productive Screen Time from Last Week"><br><br>
+                
+                        <label for="social_screen_time_last_week">Social Screen Time from Last Week:</label>
+                        <input type="text" id="social_screen_time_last_week" name="Social Screen Time from Last Week"><br><br>
+
+                        <label for="change_social_screen_time_last_week">Social Screen Time Change from Last Week:</label>
+                        <input type="text" id="change_social_screen_time_last_week" name="Social Screen Time Change from Last Week"><br><br>
+                
+                        <label for="weight">Your Current Weight:</label>
+                        <input type="text" id="weight"><br><br>
+
+                        <label for="weight_last_week">Your Last Week Weight:</label>
+                        <input type="text" id="weight_last_week"><br><br>
+
+                        <label for="steps">Your Current Steps:</label>
+                        <input type="text" id="steps"><br><br>
+
+                        <label for="steps_last_week">Your Last Week Steps:</label>
+                        <input type="text" id="steps_last_week"><br><br>
+
+                        <label for="distance">Your Current Distance:</label>
+                        <input type="text" id="distance"><br><br>
+
+                        <label for="distance_last_week">Your Last Week Distance:</label>
+                        <input type="text" id="distance_last_week"><br><br>
+
+                        <label for="total_time_in_books">Total Time In Books:</label>
+                        <input type="text" id="total_time_in_books" name="Total Time In Books"><br><br>
+                
+                        <label for="missed_days_of_books">Missed Days of Books:</label>
+                        <input type="text" id="missed_days_of_books" name="Number of Books"><br><br>
+                
+                        <label for="books_time_last_week">Books Time from Last Week:</label>
+                        <input type="text" id="books_time_last_week" name="Books Time from Last Week"><br><br>
+
+                        <label for="missed_days_of_books_last_week">Books Missed from Last Week:</label>
+                        <input type="text" id="missed_days_of_books_last_week" name="Books Number from Last Week"><br><br>
+                
+                        <label for="total_time_in_exercise">Total Time In Exercise:</label>
+                        <input type="text" id="total_time_in_exercise" name="Total Time In Exercise"><br><br>
+                
+                        <label for="missed_days_exercise">Missed Days In Exercise:</label>
+                        <input type="text" id="missed_days_exercise" name="Missed Days In Exercise"><br><br>
+                
+                        <label for="exercise_time_last_week">Exercise Time from Last Week:</label>
+                        <input type="text" id="exercise_time_last_week" name="Exercise Time from Last Week"><br><br>
+
+                        <label for="missed_days_exercise_last_week">Missed Days In Exercise Last Week:</label>
+                        <input type="text" id="missed_days_exercise_last_week" name="Missed Days In Exercise Last Week"><br><br>
+                
+                        <label for="total_time_in_religion">Total Time In Religion:</label>
+                        <input type="text" id="total_time_in_religion" name="Total Time In Religion"><br><br>
+                
+                        <label for="religion_time_last_week">Religion Time from Last Week:</label>
+                        <input type="text" id="religion_time_last_week" name="Religion Time from Last Week"><br><br>
+                
+                        <label for="missed_days_religion">Missed Days In Religion:</label>
+                        <input type="text" id="missed_days_religion" name="Missed Days In Religion"><br><br>
+
+                        <label for="missed_days_religion_last_week">Missed Days In Religion Last Week:</label>
+                        <input type="text" id="missed_days_religion_last_week" name="Missed Days In Religion Last Week"><br><br>
+                
+                        <label for="total_time_in_yt">Total Time In YT:</label>
+                        <input type="text" id="total_time_in_yt" name="Total Time In YT"><br><br>
+                
+                        <label for="yt_time_last_week">YT Time from Last Week:</label>
+                        <input type="text" id="yt_time_last_week" name="YT Time from Last Week"><br><br>
+                    
+                        <label for="yt_delayed_days">YT Delayed Days:</label>
+                        <input type="text" id="yt_delayed_days" name="YT Delayed Days"><br><br>
+
+                        <label for="yt_delayed_days_last_week">YT Delayed Days Last Week:</label>
+                        <input type="text" id="yt_delayed_days_last_week" name="YT Delayed Days Last Week"><br><br>
+
+                        <label for="total_time_in_research">Total Time In Research:</label>
+                        <input type="text" id="total_time_in_research" name="Total Time In Research"><br><br>
+
+                        <label for="total_number_in_research">Total Number In Research:</label>
+                        <input type="text" id="total_number_in_research" name="Total Number In Research"><br><br>
+                
+                        <label for="research_time_last_week">Research Time from Last Week:</label>
+                        <input type="text" id="research_time_last_week" name="Research Time from Last Week"><br><br>
+
+                        <label for="total_number_in_research_last_week">Total Number In Research Last Week:</label>
+                        <input type="text" id="total_number_in_research_last_week" name="Total Number In Research Last Week"><br><br>
+                
+                        <label for="total_time_in_study">Total Time In Study:</label>
+                        <input type="text" id="total_time_in_study" name="Total Time In Study"><br><br>
+                
+                        <label for="study_time_last_week">Study Time from Last Week:</label>
+                        <input type="text" id="study_time_last_week" name="Study Time from Last Week"><br><br>
+                
+                        <label for="total_time_in_ml">Total Time In ML:</label>
+                        <input type="text" id="total_time_in_ml" name="Total Time In ML"><br><br>
+                
+                        <label for="ml_time_last_week">ML Time from Last Week:</label>
+                        <input type="text" id="ml_time_last_week" name="ML Time from Last Week"><br><br>
+
+                        <label for="ml_worked_on_proj">Did You Work ON A Project?</label>
+                        <input type="text" id="ml_worked_on_proj" name="ML Worked on Project"><br><br>
+
+                        <label for="ml_worked_on_proj_last_week">Did You Worked ON A Project Last Week?</label>
+                        <input type="text" id="ml_worked_on_proj_last_week" name="ML Worked on Project Last Week"><br><br>
+                        <!-- Add more fields as needed... -->
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="button" id="downloadJson" class="btn btn-success">Download JSON</button>
+                </form>
+            </div>
+        
+            <div id="outputSection">
+                <h3>JSON Output:</h3>
+                <pre id="jsonDisplay">
+                    No data submitted yet.
+                </pre>
+            </div>
+
+
+            <h3>Upload The File</h3>
+            <input type="file" id="fileInput" accept=".json" class="form-control my-3">
+            <input type="text" id="weekRange" placeholder="Enter Week (e.g., 01st Jan - 07th Jan)" class="form-control my-3">
+            <button id="applyWeek" class="btn btn-primary">Apply Week</button>
+            <button id="generatePlots" class="btn btn-success mt-3" style="display: none;">Generate Plots</button>
+            <button id="downloadPDF" class="btn btn-danger mt-3">Download PDF</button>
+
+            <div class="optimum-metrics">Optimum Standards:</div>
+
+            <div class="metric-box">
+                <h4>Time Report</h4>
+                <div id = "TimeReportModel"></div>
+                <p></p>
+            </div>
+
+            <div class="metric-box">
+                <h4>Screen Time</h4>
+                <p>Requirement: Mean Social Time: Around 4-7 Hours  
+                  <br><br>Goal: Reduce Or Level Track Of Social Screen Time Compared To Last Week</p>
+                <div id = "ScreenTime"></div>
+            </div>
+
+            <div class="metric-box">
+                <h4>Health Metrics
+                </h4>
+                <p>Requirement: During Weight Loss-> More Than 0.5% Body Loss<br><br>
+                    Goal: Increase Steps & Increase Body Loss</p>
+                    <div id = "HealthMetrics"></div>
+            </div>
+
+            <div class="metric-box">
+                <h4>Study Time</h4>
+                <p>Requirement: 25-35 Hours/Week <br><br>
+                    Goal: Increase Grades By Problem Solving + Time
+                </p>
+                <div id = "Study"></div>
+            </div>
+
+            <div class="metric-box">
+                <h4>Exercise</h4>
+                <p>Requirement: Minimum 30-50 Minutes Exercise Everyday <br><br>
+                    Goal: Reduce Missed Days
+                </p>
+                <div id = "Exercise"></div>
+            </div>
+
+            <div class="metric-box">
+                <h4>Religion</h4>
+                <p>Requirement: Minimum 10-20 Minutes of Quran + Others Everyday
+                    <br><br>Goal: Increase Consistency
+                </p>
+                <div id = "Religion"></div>
+            </div>
+
+            <div class="metric-box">
+                <h4>Book</h4>
+                <p>Requirement: Minimum 40-60 Minutes Everyday<br><br>
+                    Goal: Increase Time + Consistency
+                </p>
+                <div id = "Book"></div>
+            </div>
+
+            <div class="metric-box">
+                <h4>YouTube</h4>
+                <p>Requirement: Minimum 3-5 Hours/Week & No More Than 2 Days Delay <br><br>
+                    Goal: Increase Workflow + Lesser Delay
+                </p>
+                <div id = "YouTube"></div>
+            </div>
+
+            <div class="metric-box">
+                <h4>Research Time</h4>
+                <p>Requirement: Minimum 3-4 Research/Week <br><br>
+                    Goal: Increase Shorts + Read Consistency + Revisit
+                </p>
+                <div id = "ResearchTime"></div>
+            </div>
+
+            <div class="metric-box">
+                <h4>Machine Learning</h4>
+                <p>Requirement: Minimum 3-6 Hours/Week <br><br>
+                Goal: Increase Project Involvement + Time Investment
+                </p>
+                <div id = "MachineLearning"></div>
+            </div>
+
+
+        </section>
+
+    
+        <div class="plots-container">
+            <section class="section" id="plot1">
+                <h1>Time Report</h1>
+                <div id="plot1.1Div"></div>
+                <div id="plot1.2Div"></div>
+                <div id="plot1.3Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="firstGoal">A. Are You Aligned With Goals?</label>
+                    <textarea id="firstGoal" class="prompt-box" placeholder="Enter your response for alignment with goals"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="secondGoal">B. How/Why?</label>
+                    <textarea id="secondGoal" class="prompt-box" placeholder="Enter your reasoning for alignment or misalignment"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="thirdGoal">C. ONE Key Takeaway/To-Do/Action</label>
+                    <textarea id="thirdGoal" class="prompt-box" placeholder="Enter your key takeaway or action to do"></textarea>
+                </div>
+            </section>
+        
+            <section class="section" id="plot2">
+                <h1>Screen Time</h1>
+                <div id="plot2.1Div"></div>
+                <div id="plot2.2Div"></div>
+                <div id="plot2.3Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="firstProportion">A. Are You Aligned With Goals & Requirement?</label>
+                    <textarea id="firstProportion" class="prompt-box" placeholder="Enter your response for alignment with goals & requirements"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="secondProportion">B. How/Why?</label>
+                    <textarea id="secondProportion" class="prompt-box" placeholder="Enter your reasoning for alignment or misalignment"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="thirdProportion">C. ONE Key Takeaway/To-Do/Action</label>
+                    <textarea id="thirdProportion" class="prompt-box" placeholder="Enter your key takeaway or action to do"></textarea>
+                </div>
+            </section>
+        
+            <section class="section" id="plot3">
+                <h1>Health Metrics</h1>
+                <div id="plot3.1Div"></div>
+                <div id="plot3.2Div"></div>
+                <div id="plot3.3Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="firstHealth">A. Are You Aligned With Goals & Requirement?</label>
+                    <textarea id="firstHealth" class="prompt-box" placeholder="Enter your response for alignment with health goals"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="secondHealth">B. How/Why?</label>
+                    <textarea id="secondHealth" class="prompt-box" placeholder="Enter your reasoning for health goal alignment or misalignment"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="thirdHealth">C. ONE Key Takeaway/To-Do/Action</label>
+                    <textarea id="thirdHealth" class="prompt-box" placeholder="Enter your key takeaway or action to do"></textarea>
+                </div>
+            </section>
+        
+            <section class="section" id="plot4">
+                <h1>Exercise</h1>
+                <div id="plot4Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="firstExercise">A. Are You Aligned With Goals & Requirement?</label>
+                    <textarea id="firstExercise" class="prompt-box" placeholder="Enter your response for alignment with exercise goals"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="secondExercise">B. How/Why?</label>
+                    <textarea id="secondExercise" class="prompt-box" placeholder="Enter your reasoning for exercise goal alignment or misalignment"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="thirdExercise">C. ONE Key Takeaway/To-Do/Action</label>
+                    <textarea id="thirdExercise" class="prompt-box" placeholder="Enter your key takeaway or action to do"></textarea>
+                </div>
+            </section>
+        
+            <section class="section" id="plot5">
+                <h1>Religion</h1>
+                <div id="plot5Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="firstReligion">A. Are You Aligned With Goals & Requirement?</label>
+                    <textarea id="firstReligion" class="prompt-box" placeholder="Enter your response for alignment with religious goals"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="secondReligion">B. How/Why?</label>
+                    <textarea id="secondReligion" class="prompt-box" placeholder="Enter your reasoning for religious goal alignment or misalignment"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="thirdReligion">C. ONE Key Takeaway/To-Do/Action</label>
+                    <textarea id="thirdReligion" class="prompt-box" placeholder="Enter your key takeaway or action to do"></textarea>
+                </div>
+            </section>
+        
+            <section class="section" id="plot6">
+                <h1>Book Time</h1>
+                <div id="plot6Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="firstBook">A. Are You Aligned With Goals & Requirement?</label>
+                    <textarea id="firstBook" class="prompt-box" placeholder="Enter your response for alignment with book reading goals"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="secondBook">B. How/Why?</label>
+                    <textarea id="secondBook" class="prompt-box" placeholder="Enter your reasoning for book reading goal alignment or misalignment"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="thirdBook">C. ONE Key Takeaway/To-Do/Action</label>
+                    <textarea id="thirdBook" class="prompt-box" placeholder="Enter your key takeaway or action to do"></textarea>
+                </div>
+            </section>
+
+
+        
+            <section class="section" id="plot7">
+                <h1>YouTube</h1>
+                <div id="plot7Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="firstYouTube">A. Are You Aligned With Goals & Requirement?</label>
+                    <textarea id="firstYouTube" class="prompt-box" placeholder="Enter your response for alignment with YouTube goals"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="secondYouTube">B. How/Why?</label>
+                    <textarea id="secondYouTube" class="prompt-box" placeholder="Enter your reasoning for YouTube goal alignment or misalignment"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="thirdYouTube">C. ONE Key Takeaway/To-Do/Action</label>
+                    <textarea id="thirdYouTube" class="prompt-box" placeholder="Enter your key takeaway or action to do"></textarea>
+                </div>
+                <p style="font-weight: bold; font-size: 20px;">+ Specify (Optional): The Idea/Focus/Possible Connection of YouTube For Next Week</p>
+                <div class="input-container">
+                    <label for="nextYouTubeFocus">The Idea/Focus/Possible Connection:</label>
+                    <textarea id="nextYouTubeFocus" class="prompt-box" placeholder="Enter your ideas or focus for YouTube next week"></textarea>
+                </div>
+            </section>
+        
+            <section class="section" id="plot8">
+                <h1>Research Time</h1>
+                <div id="plot8Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="firstResearch">A. Are You Aligned With Goals & Requirement?</label>
+                    <textarea id="firstResearch" class="prompt-box" placeholder="Enter your response for alignment with research goals"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="secondResearch">B. How/Why?</label>
+                    <textarea id="secondResearch" class="prompt-box" placeholder="Enter your reasoning for research goal alignment or misalignment"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="thirdResearch">C. ONE Key Takeaway/To-Do/Action</label>
+                    <textarea id="thirdResearch" class="prompt-box" placeholder="Enter your key takeaway or action to do"></textarea>
+                </div>
+                <p style="font-weight: bold; font-size: 20px;">+ Specify: The Focus Of Research For The Following Week</p>
+                <div class="input-container">
+                    <label for="researchFocus">The Focus of Research:</label>
+                    <textarea id="researchFocus" class="prompt-box" placeholder="Enter your focus for research next week"></textarea>
+                </div>
+            </section>
+        
+            <section class="section" id="plot9">
+                <h1>Machine Learning</h1>
+                <div id="plot9Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="firstML">A. Are You Aligned With Goals & Requirement?</label>
+                    <textarea id="firstML" class="prompt-box" placeholder="Enter your response for alignment with machine learning goals"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="secondML">B. How/Why?</label>
+                    <textarea id="secondML" class="prompt-box" placeholder="Enter your reasoning for machine learning goal alignment or misalignment"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="thirdML">C. ONE Key Takeaway/To-Do/Action</label>
+                    <textarea id="thirdML" class="prompt-box" placeholder="Enter your key takeaway or action to do"></textarea>
+                </div>
+                <p style="font-weight: bold; font-size: 20px;">+ Specify: A. Project or Learning B. Bulleted Explanation C.'Optional' How Exactly</p>
+                <div class="input-container">
+                    <label for="mlProject">Project or Learning:</label>
+                    <textarea id="mlProject" class="prompt-box" placeholder="Enter your machine learning project or learning topic"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="mlExplanation">Bulleted Explanation:</label>
+                    <textarea id="mlExplanation" class="prompt-box" placeholder="Enter a bulleted explanation for your machine learning work"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="mlHowExactly">How Exactly:</label>
+                    <textarea id="mlHowExactly" class="prompt-box" placeholder="Enter details on how exactly you're working on the project"></textarea>
+                </div>
+                <p style="font-weight: bold; font-size: 20px;">+ Specify: Possible LinkedIn Post 'YES/NO-HOW'</p>
+                <div class="input-container">
+                    <label for="linkedinPost">Possible LinkedIn Post:</label>
+                    <textarea id="linkedinPost" class="prompt-box" placeholder="Enter your thoughts on posting about your project on LinkedIn"></textarea>
+                </div>
+            </section>
+        
+            <section class="section full-width" id="plot10">
+                <h1>Study Time</h1>
+                <div id="plot10.1Div" style="flex: 1; min-width: 300px;"></div>
+                <div id="plot10.2Div" style="flex: 1; min-width: 300px;"></div>
+                <div id="plot10.3Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="firstStudy">A. Are You Aligned With Goals & Requirement?</label>
+                    <textarea id="firstStudy" class="prompt-box" placeholder="Enter your response for alignment with study goals"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="secondStudy">B. How/Why?</label>
+                    <textarea id="secondStudy" class="prompt-box" placeholder="Enter your reasoning for study goal alignment or misalignment"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="thirdStudy">C. ONE Key Takeaway/To-Do/Action</label>
+                    <textarea id="thirdStudy" class="prompt-box" placeholder="Enter your key takeaway or action to do"></textarea>
+                </div>
+            </section>
+        </div>
+        
+        
+
+
+    </div>   
+    
+    
+
+
+
+
+
+
+
+
+    <script>
+
+        // When the form is submitted
+        document.getElementById("dataForm").onsubmit = function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Collect form data
+            let formData = new FormData(event.target);
+
+            // Convert the form data to a plain object
+            let formDataObj = {};
+            formData.forEach((value, key) => {
+                formDataObj[key] = value;
+            });
+
+            // Convert the form data to a JSON string
+            let jsonData = JSON.stringify(formDataObj, null, 4);
+
+            // Display the JSON data in the output section
+            document.getElementById("jsonDisplay").textContent = jsonData;
+        };
+    </script>
+    
+
+    
+
+    <script>
+        
+        document.getElementById('downloadPDF').addEventListener('click', async () => {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            
+            const content = document.body; // Capture the entire page
+            const canvas = await html2canvas(content, {
+                scale: 2, // Adjust scaling factor for quality (higher = better quality, larger size)
+                useCORS: true // Ensures proper cross-origin handling
+            });
+            
+            const imgData = canvas.toDataURL('image/jpeg', 0.5); // Use JPEG and set quality to 0.7 (lower quality reduces size)
+
+            const imgWidth = 210; // A4 width in mm
+            const pageHeight = 297; // A4 height in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+
+            let position = 0;
+            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight); // Use JPEG format
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+    
+            const currentDate = new Date();
+            const formattedDate = currentDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            pdf.save(`Mahir LifeOS Report - ${formattedDate}.pdf`);
+
+        });
+
+    </script>
+
+
+
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const generatePlotsButton = document.getElementById('generatePlots');
+
+        let jsonData = null; // Variable to store JSON data
+
+
+    
+
+        
+        // Handle file upload
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    jsonData = JSON.parse(reader.result); // Store the JSON data
+                    generatePlotsButton.style.display = 'block'; // Show the "Generate Plots" button
+                };
+                reader.readAsText(file);
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        generatePlotsButton.addEventListener('click', () => {
+            if (!jsonData) return; // Do nothing if no data is loaded
+
+            // Ensure jsonData is parsed if it's still in string format
+            if (typeof jsonData === "string") {
+                jsonData = JSON.parse(jsonData);
+            }
+
+            // Convert all values to numbers and destructure
+            const metrics = {};
+            for (const [key, value] of Object.entries(jsonData)) {
+                metrics[key] = parseFloat(value) || 0; // Default to 0 if value is invalid
+            }
+
+            const {
+                total_time_worked,
+                total_time_last_week,
+                largest_duration_of_work,
+                largest_duration_of_work_last_week,
+                earliest_start,
+                earliest_start_last_week,
+                most_final_time,
+                most_final_time_last_week,
+                total_screen_time,
+                productive_screen_time,
+                social_screen_time,
+                total_screen_last_week,
+                productive_screen_time_last_week,
+                social_screen_time_last_week,
+                change_social_screen_time_last_week,
+
+                weight,
+                weight_last_week,
+                steps,
+                steps_last_week,
+                distance,
+                distance_last_week,
+
+
+                total_time_in_books,
+                missed_days_of_books,
+                books_time_last_week,
+                missed_days_of_books_last_week,
+                total_time_in_exercise,
+                missed_days_exercise,
+                exercise_time_last_week,
+                missed_days_exercise_last_week,
+                total_time_in_religion,
+                religion_time_last_week,
+                missed_days_religion,
+                missed_days_religion_last_week,
+                total_time_in_yt,
+                yt_time_last_week,
+                yt_delayed_days,
+                yt_delayed_days_last_week,
+                total_time_in_research,
+                total_number_in_research,
+                research_time_last_week,
+                total_number_in_research_last_week,
+                total_time_in_study,
+                study_time_last_week,
+                total_time_in_ml,
+                ml_time_last_week,
+                ml_worked_on_proj,
+                ml_worked_on_proj_last_week,
+            } = metrics;
+
+            if (isNaN(total_time_worked) || isNaN(total_time_last_week)) {
+                alert("Required values are missing or invalid in the JSON file!");
+                return;
+            }
+
+
+
+            // Plot 1------------------------------
+
+            const total_time_percentage = (total_time_worked/total_time_last_week)*100;
+            const duration_percentage = (largest_duration_of_work/largest_duration_of_work_last_week)*100;
+
+        
+
+            // Data for the current and last week
+            const metricz = [
+                { name: "Total Time", current: total_time_worked, lastWeek: total_time_last_week },
+                { name: "Largest Duration", current: largest_duration_of_work, lastWeek: largest_duration_of_work_last_week },
+            ];
+
+            // Prepare data for the bar plot
+            const metriczNames = metricz.map(metricz => metricz.name);
+            const currentWeekValues = metricz.map(metricz => metricz.current);
+            const lastWeekValues = metricz.map(metricz => metricz.lastWeek);
+
+            // Configure the bar plot
+            const data = [
+                {
+                    x: metriczNames,
+                    y: currentWeekValues,
+                    name: "Current Week",
+                    type: "bar",
+                    marker: { color: "rgba(27, 86, 174, 1)" }, // Blue bars
+                },
+                {
+                    x: metriczNames,
+                    y: lastWeekValues,
+                    name: "Last Week",
+                    type: "bar",
+                    marker: { color: "rgba(236, 31, 31, 0.92)" }, // Red bars
+                }
+            ];
+
+            const layout = {
+                title: "Time Metrics Comparison",
+                barmode: "group", // Grouped bars
+                xaxis: { title: "Metrics" },
+                yaxis: { title: "Values" },
+                legend: { orientation: "h", y: -0.2 },
+                width: 400, // Fixed width
+                height: 400, // Fixed height
+                margin: { l: 50, r: 50, t: 50, b: 50 }, // Add padding
+            };
+
+
+            // Dummy data for the pie chart
+            const labels = ["Study", "Exercise", "Religion", "Book", "YouTube", "Research", "Machine Learing"];
+            const values = [total_time_in_study, total_time_in_exercise, total_time_in_religion, total_time_in_books, total_time_in_yt, total_number_in_research, total_time_in_ml]; // Replace with your actual values
+
+            // Data for the pie chart
+            const pieDataq = [{
+                labels: labels,
+                values: values,
+                type: "pie",
+                textinfo: "label+value+percent", // Display label, value, and percentage on each slice
+                hoverinfo: "label+value+percent", // Information to display on hover
+                marker: {
+                    colors: ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd"], // Different colors for each slice
+                },
+            }];
+
+            // Layout for the pie chart
+            const pieLayoutq = {
+                title: "Time Worked Proportion",
+                height: 300, // Set height of the chart
+                width: 350, // Set width of the chart
+                margin: { l: 50, r: 50, t: 50, b: 50 }, // Padding around the chart
+                showlegend: true, // Show legend
+            };
+
+            // Render the pie chart
+            
+
+            // Render the Plot
+            Plotly.newPlot("plot1.1Div", data, layout);
+
+            Plotly.newPlot("plot1.2Div", pieDataq, pieLayoutq, { responsive: true });
+    
+
+            document.getElementById('plot1.3Div').innerHTML = `<h3>
+
+
+                <br> <span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;"> Early/Late Check In & Out: ${(earliest_start)} & ${(most_final_time)}<br></span>
+
+                <br>
+                <span style = "
+
+                background: linear-gradient(to right, #dc3545, #8b0000);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;"> Last Week Check In & Out: ${(earliest_start_last_week)} & ${(most_final_time_last_week)} </span>
+                </h3>`;
+
+
+
+
+
+            // Plot 2: Proportion of Tasks
+            
+            // Data for screen time metrics
+            const screenTimeMetrics = [
+                { name: "Total Screen Time", current: total_screen_time, lastWeek: total_screen_last_week },
+                { name: "Productive Screen Time", current: productive_screen_time, lastWeek: productive_screen_time_last_week },
+                { name: "Social Screen Time", current: social_screen_time, lastWeek: social_screen_time_last_week },
+            ];
+
+            // Extract data for the plot
+            const screenMetricNames = screenTimeMetrics.map(metric => metric.name);
+            const currentWeekScreenValues = screenTimeMetrics.map(metric => metric.current);
+            const lastWeekScreenValues = screenTimeMetrics.map(metric => metric.lastWeek);
+
+            // Configure the bar plot
+            const screenData = [
+                {
+                    x: screenMetricNames,
+                    y: currentWeekScreenValues,
+                    name: "Current Week",
+                    type: "bar",
+                    marker: { color: "rgba(27, 86, 174, 1)" }, //  blue for current week
+                },
+                {
+                    x: screenMetricNames,
+                    y: lastWeekScreenValues,
+                    name: "Last Week",
+                    type: "bar",
+                    marker: { color: "rgba(236, 31, 31, 0.92)" }, // red for last week
+                }
+            ];
+
+            // Configure layout with responsiveness
+            const screenLayout = {
+                title: "Screen Time Metrics Comparison",
+                barmode: "group", // Grouped bars
+                xaxis: { title: "Metrics" },
+                yaxis: { title: "Values" },
+                legend: { orientation: "h", y: -0.2 },
+                width: 400, // Fixed width
+                height: 400, // Fixed height
+                margin: { l: 50, r: 50, t: 50, b: 50 }, // Add padding
+            };
+
+
+            // Dummy data for the donut chart
+            const donutLabels = ["Productive", "Social Media"];
+            const donutValues = [productive_screen_time, social_screen_time]; // Replace with your actual values
+
+            // Data for the donut chart
+            const donutDataa = [{
+                labels: donutLabels,
+                values: donutValues,
+                type: "pie",
+                hole: 0.4, // Creates the donut effect
+                textinfo: "label+value+percent", // Display label, value, and percentage on each slice
+                hoverinfo: "label+value+percent", // Information to display on hover
+                marker: {
+                    colors: ["#3357FF", "#cf3847"], // Different colors for each slice
+                },
+            }];
+
+            // Layout for the donut chart
+            const donutLayouta = {
+                title: "Screen Time Distribution",
+                height: 300, // Set height of the chart
+                width: 380, // Set width of the chart
+                margin: { l: 50, r: 50, t: 50, b: 50 }, // Padding around the chart
+                showlegend: true, // Show legend
+            };
+
+        
+
+            // Render the plot
+            Plotly.newPlot('plot2.1Div', screenData, screenLayout, { responsive: true });
+
+            // Render the donut chart
+            Plotly.newPlot("plot2.2Div", donutDataa, donutLayouta, { responsive: true });
+
+
+            document.getElementById('plot2.3Div').innerHTML = `<h3>
+                <br><span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Δ Social Time This Week: ${(social_screen_time-social_screen_time_last_week)} Hrs</span>
+                <br>
+                <br><span style = "
+
+                background: linear-gradient(to right, #dc3545, #8b0000);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;"> Δ Social Time Last Week: ${(change_social_screen_time_last_week)} Hrs</span>
+
+                </h3>`;
+
+            // Plot 3
+
+                    
+            // Data values
+            const startweight_2024 = 82.5; // Starting weight
+
+            // Weight data (Line graph)
+            const weightData = {
+                x: ["Start Weight", "Weight Last Week", "Current Weight"],
+                y: [startweight_2024, weight_last_week, weight], // Replace with your actual values
+                type: "scatter",
+                mode: "lines+markers",
+                name: "Weight Progression",
+                line: { color: "#4CAF50", width: 2 }, // Green line
+                marker: { size: 8, color: "#4CAF50" },
+            };
+
+            // Layout for the weight plot
+            const weightLayout = {
+                title: "Weight Progression",
+                height: 300, // Fixed height for this plot
+                margin: { l: 50, r: 50, t: 50, b: 50 },
+            };
+
+            // Steps data (Bar chart)
+            const stepsData = {
+                x: ["Steps Last Week", "Steps This Week"],
+                y: [steps_last_week, steps], // Replace with your actual values
+                type: "bar",
+                name: "Steps Comparison",
+                marker: { color: ["#007BFF", "#28A745"] }, // Blue and Green bars
+            };
+
+            // Layout for the steps plot
+            const stepsLayout = {
+                title: "Steps Comparison",
+                height: 300, // Fixed height for this plot
+                margin: { l: 50, r: 50, t: 50, b: 50 },
+            };
+
+            // Plotting the weight graph in its own div
+            Plotly.newPlot("plot3.1Div", [weightData], weightLayout, { responsive: true });
+
+            // Plotting the steps graph in its own div
+            Plotly.newPlot("plot3.2Div", [stepsData], stepsLayout, { responsive: true });
+
+
+            document.getElementById('plot3.3Div').innerHTML = `
+                <h3>
+                    <br>
+                    <span style="
+                        background: linear-gradient(to right, #0069d9, #004085);
+                        color: #fff;
+                        padding: 2px 6px;
+                        border-radius: 4px;
+                        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                        font-weight: bold;
+                        display: inline;">
+                        Δ Weight Year: ${(weight - startweight_2024).toFixed(1)} 
+                        (${(((weight - startweight_2024) / weight) * 100).toFixed(1)}% Body) Kg
+                    </span>
+
+                    <br><br>
+                    <span style="
+                        background: linear-gradient(to right, #0069d9, #004085);
+                        color: #fff;
+                        padding: 2px 6px;
+                        border-radius: 4px;
+                        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                        font-weight: bold;
+                        display: inline;">
+                        Δ Weight Recent: ${(weight - weight_last_week)} (${(((weight - weight_last_week) / weight) * 100).toFixed(1)}% Body) Kg
+                    </span>
+
+
+                    <br><br>
+                    <span style="
+                        background: linear-gradient(to right, #0069d9, #004085);
+                        color: #fff;
+                        padding: 2px 6px;
+                        border-radius: 4px;
+                        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                        font-weight: bold;
+                        display: inline;">
+                        Δ Steps: ${(steps - steps_last_week)} Steps
+                    </span>
+                    <br><br>
+                    <span style="
+                        background: linear-gradient(to right, #0069d9, #004085);
+                        color: #fff;
+                        padding: 2px 6px;
+                        border-radius: 4px;
+                        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                        font-weight: bold;
+                        display: inline;">
+                        Distance This Week: ${distance} Km
+                    </span>
+                    <br><br>
+                    <span style="
+                        background: linear-gradient(to right, #dc3545, #8b0000);
+                        color: #fff;
+                        padding: 2px 6px;
+                        border-radius: 4px;
+                        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                        font-weight: bold;
+                        display: inline;">
+                        Distance Last Week: ${distance_last_week} Km
+                    </span>
+                    <br><br>
+                    <span style="
+                        background: linear-gradient(to right, #dc3545, #8b0000);
+                        color: #fff;
+                        padding: 2px 6px;
+                        border-radius: 4px;
+                        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                        font-weight: bold;
+                        display: inline;">
+                        Δ Weight L-W: ${(weight_last_week - startweight_2024).toFixed(1)} 
+                        (${(((weight_last_week - startweight_2024) / weight) * 100).toFixed(1)}% Body) Kg
+                    </span>
+                </h3>`;
+
+
+
+
+
+
+
+
+
+
+
+            
+            // Plot 4:
+
+            document.getElementById('plot4Div').innerHTML = `<h3>
+                <br><span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Missed Exercise This Week: ${(missed_days_exercise)} Days</span>
+                <br>
+                <br><span style = "
+
+                background: linear-gradient(to right, #dc3545, #8b0000);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Missed Exercise Last Week: ${(missed_days_exercise_last_week)} Days</span>
+                <br>
+                <br><span style = "
+
+                background: linear-gradient(to right, #28a745, #1e7e34);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Exercise ${((total_time_in_exercise/total_time_worked)*100).toFixed(1)}% of Total Work</span>
+
+                </h3>`;
+
+            const exerciseMetrics = [
+                { name: "Total Time in Exercise", current: total_time_in_exercise, lastWeek: exercise_time_last_week },
+                { name: "Missed Days in Exercise", current: missed_days_exercise, lastWeek: missed_days_exercise_last_week },
+            ];
+
+            // Extract data for the plot
+            const exerciseMetricNames = exerciseMetrics.map(metric => metric.name);
+            const currentWeekExerciseValues = exerciseMetrics.map(metric => metric.current);
+            const lastWeekExerciseValues = exerciseMetrics.map(metric => metric.lastWeek);
+
+
+            // Configure the bar plot with distinct colors
+            const exerciseData = [
+                {
+                    x: exerciseMetricNames,
+                    y: currentWeekExerciseValues,
+                    name: "Current Week",
+                    type: "bar",
+                    marker: { color: "rgba(27, 86, 174, 1)" }, // blue for current week
+                },
+                {
+                    x: exerciseMetricNames,
+                    y: lastWeekExerciseValues,
+                    name: "Last Week",
+                    type: "bar",
+                    marker: { color: "rgba(236, 31, 31, 0.92)" }, // red for last week
+                }
+            ];
+
+            // Configure layout with responsive scaling
+            const exerciseLayout = {
+                title: "Exercise Metrics Comparison",
+                barmode: "group", // Grouped bars
+                xaxis: { title: "Metrics" },
+                yaxis: { title: "Values" },
+                legend: { orientation: "h", y: -0.2 }, // Horizontal legend
+                width: 400, // Fixed width
+                height: 400, // Fixed height
+                margin: { l: 50, r: 50, t: 50, b: 50 }, // Add padding
+            };
+
+            // Render the plot
+            Plotly.newPlot('plot4Div', exerciseData, exerciseLayout, { responsive: true });
+
+
+
+
+
+
+            // Plot 5: 
+
+
+            document.getElementById('plot5Div').innerHTML = `<h3>
+                <br><span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Missed Religion This Week: ${(missed_days_religion)} Days</span>
+                <br>
+                <br><span style = "
+
+                background: linear-gradient(to right, #dc3545, #8b0000);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Missed Religion Last Week: ${(missed_days_religion_last_week)} Days</span>
+                <br>
+                <br><span style = "
+
+                background: linear-gradient(to right, #28a745, #1e7e34);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Religion ${((total_time_in_religion/total_time_worked)*100).toFixed(1)}% of Total Work</span>
+
+
+                </h3>`;
+
+
+            // Data for religion metrics
+            const religionMetrics = [
+                { name: "Total Time in Religion", current: total_time_in_religion, lastWeek: religion_time_last_week },
+                { name: "Missed Days in Religion", current: missed_days_religion, lastWeek: missed_days_religion_last_week },
+            ];
+
+            // Extract data for the plot
+            const religionMetricNames = religionMetrics.map(metric => metric.name);
+            const currentWeekReligionValues = religionMetrics.map(metric => metric.current);
+            const lastWeekReligionValues = religionMetrics.map(metric => metric.lastWeek);
+
+            // Configure the bar plot with distinct colors
+            const religionData = [
+                {
+                    x: religionMetricNames,
+                    y: currentWeekReligionValues,
+                    name: "Current Week",
+                    type: "bar",
+                    marker: { color: "rgba(27, 86, 174, 1)" }, // blue for current week
+                },
+                {
+                    x: religionMetricNames,
+                    y: lastWeekReligionValues,
+                    name: "Last Week",
+                    type: "bar",
+                    marker: { color: "rgba(236, 31, 31, 0.92)" }, //  red for last week
+                }
+            ];
+
+            // Configure layout with responsive scaling
+            const religionLayout = {
+                title: "Religion Metrics Comparison",
+                barmode: "group", // Grouped bars
+                xaxis: { title: "Metrics" },
+                yaxis: { title: "Values" },
+                legend: { orientation: "h", y: -0.2 }, // Horizontal legend
+                width: 400, // Fixed width
+                height: 400, // Fixed height
+                margin: { l: 50, r: 50, t: 50, b: 50 }, // Add padding
+            };
+
+            // Render the plot
+            Plotly.newPlot('plot5Div', religionData, religionLayout, { responsive: true });
+
+
+
+
+            
+
+            // Plot 6: 
+
+            document.getElementById('plot6Div').innerHTML = `<h3>
+                <br><span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Missed Days Books This Week: ${(missed_days_of_books)} Days</span>
+                <br>
+                <br><span style = "
+
+                background: linear-gradient(to right, #dc3545, #8b0000);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Missed Days Books Last Week: ${(missed_days_of_books_last_week)} Days</span>
+                <br>
+                <br><span style = "
+
+                background: linear-gradient(to right, #28a745, #1e7e34);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Books ${((total_time_in_books/total_time_worked)*100).toFixed(1)}% of Total Work</span>
+
+
+                </h3>`;
+
+            // Data for books metrics
+            const booksMetrics = [
+                { name: "Total Time in Books", current: total_time_in_books, lastWeek: books_time_last_week },
+                { name: "Missed Days of Books", current: missed_days_of_books, lastWeek: missed_days_of_books_last_week },
+            ];
+
+            // Extract data for the plot
+            const booksMetricNames = booksMetrics.map(metric => metric.name);
+            const currentWeekBooksValues = booksMetrics.map(metric => metric.current);
+            const lastWeekBooksValues = booksMetrics.map(metric => metric.lastWeek);
+
+            // Configure the bar plot with distinct colors
+            const booksData = [
+                {
+                    x: booksMetricNames,
+                    y: currentWeekBooksValues,
+                    name: "Current Week",
+                    type: "bar",
+                    marker: { color: "rgba(27, 86, 174, 1)" }, // blue for current week
+                },
+                {
+                    x: booksMetricNames,
+                    y: lastWeekBooksValues,
+                    name: "Last Week",
+                    type: "bar",
+                    marker: { color: "rgba(236, 31, 31, 0.92)" }, // red for last week
+                }
+            ];
+
+            // Configure layout with responsive scaling
+            const booksLayout = {
+                title: "Books Metrics Comparison",
+                barmode: "group", // Grouped bars
+                xaxis: { title: "Metrics" },
+                yaxis: { title: "Values" },
+                legend: { orientation: "h", y: -0.2 }, // Horizontal legend
+                width: 400, // Fixed width
+                height: 400, // Fixed height
+                margin: { l: 50, r: 50, t: 50, b: 50 }, // Add padding
+            };
+
+            // Render the plot
+            Plotly.newPlot('plot6Div', booksData, booksLayout, { responsive: true });
+
+
+
+
+            // Plot 7:
+            // Data for YouTube metrics
+
+            document.getElementById('plot7Div').innerHTML = `<h3>
+                <br><span style="
+                    background: linear-gradient(to right, #0069d9, #004085);
+                    color: #fff;
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                    font-weight: bold;
+                    display: inline;">
+                    YT Delayed Days This Week: ${(yt_delayed_days)} Days</span>
+                <br>
+                <br><span style="
+                    background: linear-gradient(to right, #dc3545, #8b0000);
+                    color: #fff;
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                    font-weight: bold;
+                    display: inline;">
+                    YT Delayed Days Last Week: ${(yt_delayed_days_last_week)} Days</span>
+                <br>
+                <br><span style = "
+
+                background: linear-gradient(to right, #28a745, #1e7e34);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">YouTube ${((total_time_in_yt/total_time_worked)*100).toFixed(1)}% of Total Work</span>
+
+            </h3>`;
+
+            const ytDonutData = [
+                {
+                    labels: ["Current Week", "Last Week"],
+                    values: [total_time_in_yt, yt_time_last_week],
+                    type: "pie",
+                    hole: 0.4,
+                    marker: { colors: ["rgba(27, 86, 174, 1)", "rgba(236, 31, 31, 0.92)"] }
+                }
+            ];
+
+            const ytDonutLayout = {
+                title: "YouTube Time Proportion",
+                annotations: [
+                    {
+                        font: { size: 20 },
+                        showarrow: false,
+                        text: "YouTube",
+                        x: 0.5, // Adjusted to center properly in layout
+                        y: 0.5, // Adjusted to center properly in layout
+                    }
+                ],
+                margin: { l: 0, r: 0, t: 40, b: 0 }, // Adjust margins to reduce overlap
+                showlegend: true,
+                height: 400, // Fixed height for better spacing
+                width: 400, // Fixed width for better alignment
+            };
+
+            // Render the donut chart
+            Plotly.newPlot('plot7Div', ytDonutData, ytDonutLayout, { responsive: true });
+
+
+            
+
+        // Plot 8
+
+            document.getElementById('plot8Div').innerHTML = `<h3>
+                <br><span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Research This Week: ${(total_number_in_research)} Papers</span>
+                <br>
+                <br><span style = "
+
+                background: linear-gradient(to right, #dc3545, #8b0000);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Research Last Week: ${(total_number_in_research_last_week)} Papers</span>
+                <br>
+                <br><span style = "
+
+                background: linear-gradient(to right, #28a745, #1e7e34);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Research ${((total_time_in_research/total_time_worked)*100).toFixed(1)}% of Total Work</span>
+
+
+                </h3>`;
+
+        // Data preparation
+            const researchMetrics = [
+                { name: "Time in Research", current: total_time_in_research, lastWeek: research_time_last_week },
+                { name: "Number in Research", current: total_number_in_research, lastWeek: total_number_in_research_last_week },
+            ];
+
+            const metricNames = researchMetrics.map(metric => metric.name);
+            const currentValues = researchMetrics.map(metric => metric.current);
+            const lastWeekValuez = researchMetrics.map(metric => metric.lastWeek);
+
+            // Plotly grouped bar chart configuration
+            const datak = [
+                {
+                    x: metricNames,
+                    y: currentValues,
+                    name: "Current Week",
+                    type: "bar",
+                    marker: { color: "rgba(27, 86, 174, 1)" }, // blue shades
+                },
+                {
+                    x: metricNames,
+                    y: lastWeekValuez,
+                    name: "Last Week",
+                    type: "bar",
+                    marker: { color: "rgba(236, 31, 31, 0.92)" }, // red shades
+                },
+            ];
+
+            const layoutk = {
+                title: "Research Metrics Comparison",
+                barmode: "group", // Grouped bars
+                xaxis: { title: "Metrics" },
+                yaxis: { title: "Values" },
+                legend: { orientation: "h", y: -0.2 }, // Horizontal legend
+                width: 400, // Fixed width
+                height: 400, // Fixed height
+                margin: { l: 50, r: 50, t: 50, b: 50 }, // Add padding
+            };
+
+            Plotly.newPlot("plot8Div", datak, layoutk);
+
+
+
+
+
+            // Plot 9
+
+            document.getElementById('plot9Div').innerHTML = `<h3>
+                <br><span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Worked On Project This Week: ${(ml_worked_on_proj)} Hrs</span>
+                <br>
+                <br><span style = "
+
+                background: linear-gradient(to right, #dc3545, #8b0000);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Worked On Project Last Week: ${(ml_worked_on_proj_last_week)} Hrs</span>
+                <br>
+                <br><span style = "
+
+                background: linear-gradient(to right, #28a745, #1e7e34);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">ML ${((total_time_in_ml/total_time_worked)*100).toFixed(1)}% of Total Work</span>
+
+
+                </h3>`;
+
+
+            const mlMetrics = [
+                { name: "Time in ML (Current Week)", value: total_time_in_ml },
+                { name: "Time in ML (Last Week)", value: ml_time_last_week },
+            ];
+
+            // Bar chart configuration
+            const mlData = [
+                {
+                    x: mlMetrics.map(metric => metric.name),
+                    y: mlMetrics.map(metric => metric.value),
+                    type: "bar",
+                    marker: { color: ["rgba(27, 86, 174, 1)", "rgba(236, 31, 31, 0.92)"] }, // Red and blue shades
+                },
+            ];
+
+            const mlLayout = {
+                title: "Time Spent on ML Current Week vs Last Week",
+                xaxis: { title: "Metrics" },
+                yaxis: { title: "Hours Spent" },
+                width: 400, // Fixed width
+                height: 400, // Fixed height
+                margin: { l: 50, r: 50, t: 50, b: 50 }, // Add padding
+            };
+
+            Plotly.newPlot("plot9Div", mlData, mlLayout);
+
+
+            //Plot 10
+
+            // Dummy data for the pie chart (Study Time Distribution)
+    // Dummy data for the pie chart (Study Time Distribution)
+// Dummy data for the pie chart (Study Time Distribution)
+            const pieLabels = ["Other Stuffs", "Study"];
+
+            // Ensure total_time_worked is greater than or equal to total_time_in_study
+            const total_time_worked_ok = Math.max(total_time_worked, total_time_in_study); // Prevent logical errors
+            const difference_study_total = total_time_worked_ok - total_time_in_study;
+
+            // Use absolute values for clarity
+            const pieValues = [difference_study_total, total_time_in_study];
+
+            const pieData = [{
+                labels: pieLabels,
+                values: pieValues,
+                type: "pie",
+                hole: 0.2, // Slight donut effect
+                textinfo: "label+value+percent", // Display label, value, and percentage
+                hoverinfo: "label+value+percent",
+                marker: {
+                    colors: ["#FF5733", "#33FF57"], // Custom colors
+                },
+            }];
+
+            const pieLayout = {
+                title: "Study Time Distribution",
+                height: 400,
+                width: 400,
+                margin: { l: 20, r: 20, t: 50, b: 20 }, // Add padding
+            };
+
+            // Dummy data for the bar chart (Daily Study Hours)
+            const barLabels = ["This Week", "Last Week"];
+            const barValues = [total_time_in_study, study_time_last_week]; // Replace with actual values
+
+            const barData = [{
+                x: barLabels,
+                y: barValues,
+                type: "bar",
+                name: "Study Time",
+                text: barValues.map(value => `${value} hrs`), // Show hours on hover
+                textposition: "auto", // Show text on bars
+                marker: {
+                    color: ["#4CAF50", "#007BFF"], // Green for this week, Blue for last week
+                },
+            }];
+
+            const barLayout = {
+                title: "This Week vs Last Week",
+                height: 400,
+                width: 400,
+                margin: { l: 50, r: 20, t: 50, b: 50 }, // Add padding
+            };
+
+            // Render the Pie Chart
+            Plotly.newPlot("plot10.1Div", pieData, pieLayout, { responsive: true });
+
+            // Render the Bar Chart
+            Plotly.newPlot("plot10.2Div", barData, barLayout, { responsive: true });
+            
+
+
+            document.getElementById('plot10.3Div').innerHTML = `<h3>
+                <br><span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Study This Week: ${(total_time_in_study)} Hours</span>
+                <br>
+                <br><span style = "
+
+                background: linear-gradient(to right, #dc3545, #8b0000);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Study Last Week: ${(study_time_last_week)} Hours</span>
+                <br>
+                <br><span style = "
+
+                background: linear-gradient(to right, #28a745, #1e7e34);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Study ${((total_time_in_study/total_time_worked)*100).toFixed(1)}% of Total Work</span>
+
+
+                </h3>`;
+
+
+
+
+
+
+
+
+
+        });
+
+
+
+        // NOW PLOTS AND LABEL FOR PRE-DEFINED STANDARDS
+
+        // Define the data categories and dummy values
+
+            document.getElementById('TimeReportModel').innerHTML = `<h5>
+                <br>
+                <span style = "
+
+                background: linear-gradient(to right, #28a745, #1e7e34);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Compare Time</span>
+
+
+                </h5>`;
+
+        const categories = ["Study", "YT", "Research", "Book", "Machine Learning", "Exercise", "Religion"];
+        const values = [30, 6, 4.5, 7, 7, 5.5, 2]; // Dummy values (replace with your own values)
+
+        // Create the pie chart data
+        const pieData = [
+            {
+                labels: categories,
+                values: values,
+                type: "pie",
+                textinfo: "label+percent+value", // Show labels, percentages, and values
+                textposition: "inside",
+                hoverinfo: "label+value+percent", // Hover info format
+                marker: {
+                    colors: [
+                        "#4CAF50", // Green for "Study"
+                        "#0069D9", // Blue for "YT"
+                        "#FFC107", // Amber for "Research"
+                        "#FF5722", // Deep Orange for "Book"
+                        "#673AB7", // Deep Purple for "Machine Learning"
+                        "#3F51B5", // Indigo for "Exercise"
+                        "#009688", // Teal for "Religion"
+                    ],
+                },
+            },
+        ];
+
+        // Define the layout
+        const pieLayout = {
+            title: "Activity Distribution",
+            height: 400, // Fixed height
+            width: 250,  // Fixed width
+            margin: { l: 0, r: 0, t: 30, b: 0 }, // Adjust margins to fit well
+            showlegend: true, // Display legend
+            legend: { orientation: "h", x: 0, y: -0.2 }, // Position legend below the chart
+        };
+
+        // Render the pie chart
+        Plotly.newPlot('TimeReportModel', pieData, pieLayout, { responsive: true });
+
+
+        document.getElementById('ScreenTime').innerHTML = `<h5>
+                <br>
+                <span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Compare Screen Time</span>
+
+
+                </h5>`;
+
+
+        
+
+                // Study one here
+
+
+
+
+        document.getElementById('Exercise').innerHTML = `<h5>
+        <br>
+        <span style = "
+
+        background: linear-gradient(to right, #0069d9, #004085);
+        color: #fff;
+        padding: 2px 6px; /* Adjust padding to keep it compact */
+        border-radius: 4px; /* Reduce border-radius for sleekness */
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        font-weight: bold;
+        display: inline;">Compare Exercise</span>
+
+
+        </h5>`;
+
+
+        document.getElementById('Religion').innerHTML = `<h5>
+        <br>
+        <span style = "
+
+        background: linear-gradient(to right, #0069d9, #004085);
+        color: #fff;
+        padding: 2px 6px; /* Adjust padding to keep it compact */
+        border-radius: 4px; /* Reduce border-radius for sleekness */
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        font-weight: bold;
+        display: inline;">Compare Religion</span>
+
+
+        </h5>`;
+
+
+        document.getElementById('Book').innerHTML = `<h5>
+        <br>
+        <span style = "
+
+        background: linear-gradient(to right, #0069d9, #004085);
+        color: #fff;
+        padding: 2px 6px; /* Adjust padding to keep it compact */
+        border-radius: 4px; /* Reduce border-radius for sleekness */
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        font-weight: bold;
+        display: inline;">Compare Book</span>
+
+
+        </h5>`;
+
+
+        document.getElementById('YouTube').innerHTML = `<h5>
+        <br>
+        <span style = "
+
+        background: linear-gradient(to right, #0069d9, #004085);
+        color: #fff;
+        padding: 2px 6px; /* Adjust padding to keep it compact */
+        border-radius: 4px; /* Reduce border-radius for sleekness */
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        font-weight: bold;
+        display: inline;">Compare YouTube</span>
+
+
+        </h5>`;
+
+
+        document.getElementById('ResearchTime').innerHTML = `<h5>
+        <br>
+        <span style = "
+
+        background: linear-gradient(to right, #0069d9, #004085);
+        color: #fff;
+        padding: 2px 6px; /* Adjust padding to keep it compact */
+        border-radius: 4px; /* Reduce border-radius for sleekness */
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        font-weight: bold;
+        display: inline;">Compare Research</span>
+
+
+        </h5>`;
+
+
+        document.getElementById('MachineLearning').innerHTML = `<h5>
+        <br>
+        <span style = "
+
+        background: linear-gradient(to right, #0069d9, #004085);
+        color: #fff;
+        padding: 2px 6px; /* Adjust padding to keep it compact */
+        border-radius: 4px; /* Reduce border-radius for sleekness */
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        font-weight: bold;
+        display: inline;">Compare ML</span>
+
+
+        </h5>`;
+
+
+
+
+        document.getElementById('HealthMetrics').innerHTML = `<h5>
+                <br>
+                <span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Compare Health</span>
+
+
+                </h5>`;
+
+
+        document.getElementById('Study').innerHTML = `<h5>
+                <br>
+                <span style = "
+
+                background: linear-gradient(to right, #0069d9, #004085);
+                color: #fff;
+                padding: 2px 6px; /* Adjust padding to keep it compact */
+                border-radius: 4px; /* Reduce border-radius for sleekness */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                font-weight: bold;
+                display: inline;">Compare Study</span>
+
+
+                </h5>`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // --------------
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the required elements
+
+            
+            const applyWeekButton = document.getElementById('applyWeek');
+            const weekRangeInput = document.getElementById('weekRange');
+            const reportTitle = document.getElementById('reportTitle');
+
+            console.log(applyWeekButton); // Check if the button is correctly selected
+            console.log(weekRangeInput); // Check if the input field is selected
+            console.log(reportTitle); // Check if the title element is selected
+
+    
+
+            // Check if elements exist
+            if (!applyWeekButton || !weekRangeInput || !reportTitle) {
+                console.error("One or more required elements are missing in the HTML.");
+                return;
+            }
+
+            // Add the event listener for the Apply Week button
+            applyWeekButton.addEventListener('click', () => {
+                const weekRange = weekRangeInput.value.trim(); // Get and trim input value
+                console.log("Week range: ", weekRange); // Debugging: Check value of weekRange
+                if (!weekRange) {
+                    alert("Please enter a valid week range!");
+                    return;
+                }
+
+                // Update the title with the week range
+                reportTitle.textContent = `Shahriyar Ahmed Mahir - LifeOS Weekly Report (${weekRange})`;
+                console.log(`Week range applied: ${weekRange}`); // Debugging log
+            });
+
+
+            // Initial setup for the title (without using weekRange here)
+            reportTitle.style.display = "none"; // Hide element temporarily
+            reportTitle.offsetHeight; // Trigger reflow
+            reportTitle.style.display = ""; // Show element again
+        });
+    </script>
+
+
+
+    <script>
+         // The field data that will be collected
+         const fields = [
+            { id: 'total_time_worked', label: 'Total Time Worked:', placeholder: 'Input Hours As Digits'},
+            { id: 'total_time_last_week', label: 'Total Time Last Week:', placeholder: 'Input Hours As Digits' },
+            { id: 'largest_duration_of_work', label: 'Largest Duration Of Work:', placeholder: 'Input Hours As Digits' },
+            { id: 'largest_duration_of_work_last_week', label: 'Largest Duration of Work Last Week:', placeholder: 'Input Hours As Digits' },
+            { id: 'earliest_start', label: 'Earliest Start Of Working:', placeholder: 'Input Time As Digits + AM/PM'},
+            { id: 'earliest_start_last_week', label: 'Earliest Start Of Working Last Week', placeholder: 'Input Time As Digits + AM/PM' },
+            { id: 'most_final_time', label: 'Most Final Time Of Working', placeholder: 'Input Time As Digits + AM/PM' },
+            { id: 'most_final_time_last_week', label: 'Most Final Time Of Working Last Week', placeholder: 'Input Time As Digits + AM/PM' },
+            { id: 'total_screen_time', label: 'Total Screen Time:', placeholder: 'Input Hours As Digits' },
+            { id: 'productive_screen_time', label: 'Productive Screen Time:', placeholder: 'Input Hours As Digits' },
+            { id: 'social_screen_time', label: 'Social Screen Time:', placeholder: 'Input Hours As Digits' },
+            { id: 'total_screen_last_week', label: 'Total Screen Time Last Week:', placeholder: 'Input Hours As Digits' },
+            { id: 'productive_screen_time_last_week', label: 'Productive Screen Time from Last Week:', placeholder: 'Input Hours As Digits' },
+            { id: 'social_screen_time_last_week', label: 'Social Screen Time from Last Week:', placeholder: 'Input Hours As Digits' },
+            { id: 'change_social_screen_time_last_week', label: 'Social Screen Time Change from Last Week:', placeholder: 'Input Hours As Digits' },
+            { id: 'total_time_in_books', label: 'Total Time In Books:', placeholder: 'Input Hours As Digits' },
+            { id: 'missed_days_of_books', label: 'Missed Days of Books:', placeholder: 'Input Days As Digits' },
+            { id: 'books_time_last_week', label: 'Books Time from Last Week:', placeholder: 'Input Days As Digits' },
+            { id: 'missed_days_of_books_last_week', label: 'Books Missed Days from Last Week:', placeholder: 'Input Days As Digits' },
+            { id: 'total_time_in_exercise', label: 'Total Time In Exercise:', placeholder: 'Input Hours As Digits' },
+            { id: 'weight', label: 'Your Current Weight:', placeholder: 'Input Kilogram As Digits'},
+            { id: 'weight_last_week', label: 'Your Last Week Weight:', placeholder: 'Input Kilogram As Digits' },
+            { id: 'steps', label: 'Your Current Steps:', placeholder: 'Input Steps As Digits' },
+            { id: 'steps_last_week', label: 'Your Last Week Steps:', placeholder: 'Input Steps As Digits' },
+            { id: 'distance', label: 'Your Current Distance:', placeholder: 'Input Kilometer As Digits' },
+            { id: 'distance_last_week', label: 'Your Last Week Distance:', placeholder: 'Input Kilometer As Digits' },
+            { id: 'missed_days_exercise', label: 'Missed Days In Exercise:', placeholder: 'Input Days As Digits' },
+            { id: 'exercise_time_last_week', label: 'Exercise Time from Last Week:', placeholder: 'Input Hours As Digits' },
+            { id: 'missed_days_exercise_last_week', label: 'Missed Days In Exercise Last Week:', placeholder: 'Input Days As Digits' },
+            { id: 'total_time_in_religion', label: 'Total Time In Religion:', placeholder: 'Input Hours As Digits' },
+            { id: 'religion_time_last_week', label: 'Religion Time from Last Week:', placeholder: 'Input Hours As Digits' },
+            { id: 'missed_days_religion', label: 'Missed Days In Religion:', placeholder: 'Input Days As Digits' },
+            { id: 'missed_days_religion_last_week', label: 'Missed Days In Religion Last Week:', placeholder: 'Input Days As Digits' },
+            { id: 'total_time_in_yt', label: 'Total Time In YT:' , placeholder: 'Input Hours As Digits'},
+            { id: 'yt_time_last_week', label: 'YT Time from Last Week:' , placeholder: 'Input Hours As Digits'},
+            { id: 'yt_delayed_days', label: 'YT Delayed Days:' , placeholder: 'Input Days As Digits'},
+            { id: 'yt_delayed_days_last_week', label: 'YT Delayed Days Last Week:' , placeholder: 'Input Days As Digits'},
+            { id: 'total_time_in_research', label: 'Total Time In Research:' , placeholder: 'Input Hours As Digits'},
+            { id: 'total_number_in_research', label: 'Total Number In Research:' , placeholder: 'Input Number As Digits'},
+            { id: 'research_time_last_week', label: 'Research Time from Last Week:', placeholder: 'Input Hours As Digits'},
+            { id: 'total_number_in_research_last_week', label: 'Total Number In Research Last Week:' , placeholder: 'Input Numbers As Digits'},
+            { id: 'total_time_in_study', label: 'Total Time In Study:' , placeholder: 'Input Hours As Digits'},
+            { id: 'study_time_last_week', label: 'Study Time from Last Week:' , placeholder: 'Input Hours As Digits'},
+            { id: 'total_time_in_ml', label: 'Total Time In ML:' , placeholder: 'Input Hours As Digits'},
+            { id: 'ml_time_last_week', label: 'ML Time from Last Week:' , placeholder: 'Input Hours As Digits'},
+            { id: 'ml_worked_on_proj', label: 'ML Worked on Project' , placeholder: 'Input YES/NO'},
+            { id: 'ml_worked_on_proj_last_week', label: 'ML Worked on Project Last Week', placeholder: 'Input YES/NO'},
+
+        ];
+
+    
+                // Object to store the data progressively
+        let formDataObj = {};
+
+        // Current field index
+        let currentFieldIndex = 0;
+
+        // Function to display the current field
+        function displayField() {
+            const currentField = fields[currentFieldIndex];
+            const fieldSection = document.getElementById('fieldSection');
+            fieldSection.innerHTML = `
+                <label for="${currentField.id}">${currentField.label}</label>
+                <input type="text" id="${currentField.id}" name="${currentField.id}"
+                placeholder="Enter ${currentField.placeholder}">
+            `;
+            document.getElementById(`${currentField.id}`).focus(); // Focus on the new input field
+        }
+
+        // Function to handle form submission
+        document.getElementById("dataForm").onsubmit = function(event) {
+            event.preventDefault();
+
+            const currentField = fields[currentFieldIndex];
+
+            // Get the value entered for the current field
+            const fieldValue = document.getElementById(currentField.id).value.trim();
+
+            // Save the value in the formData object if valid
+            if (fieldValue) {
+                formDataObj[currentField.id] = fieldValue;
+            } else {
+                alert("Please enter a valid value.");
+                return;
+            }
+
+            // Convert the form data to a JSON string and display it
+            const jsonData = JSON.stringify(formDataObj, null, 4);
+            document.getElementById("jsonDisplay").textContent = jsonData;
+
+            // Move to the next field
+            currentFieldIndex++;
+
+            // If there are more fields, display the next one
+            if (currentFieldIndex < fields.length) {
+                displayField();
+            } else {
+                // All fields have been submitted
+                document.getElementById("fieldSection").innerHTML = "<p>All data collected! Thank you!</p>";
+
+                // Hide only the Submit button
+                const submitButton = document.querySelector("button[type='submit']");
+                if (submitButton) submitButton.style.display = "none";
+
+                // Ensure the Download JSON button remains visible
+                const downloadButton = document.getElementById("downloadJson");
+                if (downloadButton) downloadButton.style.display = "inline-block";
+            }
+        };
+
+        // Display the first field when the page loads
+        window.onload = displayField;
+
+
+        document.getElementById("downloadJson").addEventListener("click", () => {
+            if (Object.keys(formDataObj).length === 0) {
+                alert("No data to download. Please complete the form first.");
+                return;
+            }
+
+            const jsonData = JSON.stringify(formDataObj, null, 4);
+            const blob = new Blob([jsonData], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+
+            const currentDate = new Date();
+            const formattedDate = currentDate.toISOString().split('T')[0];
+            a.href = url;
+            a.download = `mahir_lifeos_${formattedDate}.json`;
+            a.click();
+
+            URL.revokeObjectURL(url);
+
+            URL.revokeObjectURL(url); // Clean up the URL object
+
+            // Hide the Enter Your Data and JSON Output sections
+            const inputSection = document.getElementById("inputSection");
+            const outputSection = document.getElementById("outputSection");
+            if (inputSection) inputSection.style.display = "none";
+            if (outputSection) outputSection.style.display = "none";
+
+            // Optional: Add a success message after hiding the sections
+            const successMessage = document.createElement("div");
+            successMessage.textContent = "Download completed! Thank you for using the form.";
+            successMessage.style.color = "green";
+            successMessage.style.textAlign = "center";
+            successMessage.style.marginTop = "20px";
+            document.body.appendChild(successMessage);
+        });
+    </script>
+
+    
+</body>
+</html>
+
+
+
+
+
