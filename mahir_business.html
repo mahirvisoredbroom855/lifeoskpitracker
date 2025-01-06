@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shahriyar Ahmed Mahir  - YouTube Business Weekly Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+
+        /* Use a modern font */
+        body {
+            font-family: 'Avenir', sans-serif;
+            background: linear-gradient(to bottom, #89CFF0, #D1E8E2); /* Slightly darker blue to a soft minty color */
+            padding: 10px;
+        }
+
+
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 40px; /* Increase padding for more space */
+            padding-bottom: 20px; /* Add some space below the title */
+            background: linear-gradient(to right, #0069d9, #004085); 
+            color: #ffffff; /* White text color for contrast */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            font-family: 'Avenir', sans-serif;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            font-family: 'Avenir', sans-serif;
+            
+        }
+
+        .main-container {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        /* Upload Section */
+        #uploadSection {
+            flex: 0 1 auto; /* Prevent it from growing unnecessarily */
+            max-width: 300px; /* Set a maximum width */
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            height: auto
+        }
+
+        #uploadSection h3 {
+            
+            flex: 1;
+            min-width: 250px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            height: auto;
+
+        }
+
+        .plots-container {
+            flex-grow: 2;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        /* Section Styles */
+        .section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-8px);
+            background-color: #f9f9f9;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .section h3 {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .section p {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 2px;
+        }
+
+        .section .prompt-box {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            margin-top: 0px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            box-sizing: border-box;
+            transition: border 0.3s ease;
+        }
+
+        .section .prompt-box:focus {
+            border: 1px solid #6c757d;
+        }
+
+        /* Button Styles */
+        button {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+
+
+
+
+
+        h4 {
+            text-align: center;
+        }
+
+        button:hover {
+            background-color: #0069d9;
+            color: #fff;
+        }
+
+        /* Heading for Optimum Metrics */
+        .optimum-metrics {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.5rem;
+            text-decoration: underline;
+            color: #333;
+            font-size: 1.25rem;
+        }
+
+
+        /* Custom Styling for the metric boxes */
+        .metric-box {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            font-size: 1.25rem;
+        }
+
+        .metric-box h4 {
+            text-align: center;
+            color: #333;
+            font-size: 1.25rem;
+        }
+
+        .metric-box p {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .full-width {
+            grid-column: 1 / -1; /* Make the element span all columns */
+        }
+
+
+        #inputSection {
+            display: block;
+            
+        }
+        #outputSection {
+            display: block;
+            margin-top: 20px;
+        }
+        #inputSection.hidden {
+            display: none;
+        }
+
+
+            /* Ensure buttons are the same height, padding, and aligned */
+        .button-container {
+            display: flex;
+            gap: 07px; /* Space between buttons */
+            margin-top: 20px; /* Add spacing above buttons */
+            margin-bottom: 20px;
+        }
+
+        .button-container button {
+            height: 45px; /* Set consistent height */
+            padding: 10px 20px; /* Ensure padding is equal */
+            font-size: 16px; /* Consistent font size */
+            border-radius: 5px; /* Rounded corners */
+            border: none; /* Remove default borders */
+            cursor: pointer; /* Pointer cursor for buttons */
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background-color: #007bff; /* Bootstrap primary color */
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker shade on hover */
+        }
+
+        .btn-success {
+            background-color: #28a745; /* Bootstrap success color */
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background-color: #218838; /* Darker shade on hover */
+        }
+
+
+
+
+
+
+        
+        
+        
+        
+        h4 {
+            text-align: center;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 40px; /* Increase padding for more space */
+            padding-bottom: 20px; /* Add some space below the title */
+            background: linear-gradient(to right, #0069d9, #004085); 
+            color: #ffffff; /* White text color for contrast */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            font-family: 'Avenir', sans-serif;
+        }
+        input::placeholder {
+            font-size: 12px; /* Set the font size for the placeholder text */
+            color: #888; /* Optional: Change placeholder text color */
+            
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 id = "reportTitle">Shahriyar Ahmed Mahir - YouTube Business Weekly Report</h1>
+    </header>
+
+    <div class="main-container">
+        
+        <section id="uploadSection">
+            <div id="inputSection">
+                <form id="dataForm">
+                    <h3>Enter Your Data</h3>
+        
+                    <div id="fieldSection" class = 'button-container'>
+    
+                
+                        <label for="total_time_in_yt">Total Time In YT:</label>
+                        <input type="text" id="total_time_in_yt" name="Total Time In YT"><br><br>
+                
+                        <label for="yt_time_last_week">YT Time from Last Week:</label>
+                        <input type="text" id="yt_time_last_week" name="YT Time from Last Week"><br><br>
+                    
+                        <label for="yt_delayed_days">YT Delayed Days:</label>
+                        <input type="text" id="yt_delayed_days" name="YT Delayed Days"><br><br>
+
+                        <label for="yt_delayed_days_last_week">YT Delayed Days Last Week:</label>
+                        <input type="text" id="yt_delayed_days_last_week" name="YT Delayed Days Last Week"><br><br>
+
+                        
+                        <!-- Add more fields as needed... -->
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="button" id="downloadJson" class="btn btn-success">Download JSON</button>
+                </form>
+            </div>
+        
+            <div id="outputSection">
+                <h3>JSON Output:</h3>
+                <pre id="jsonDisplay">
+                    No data submitted yet.
+                </pre>
+            </div>
+
+
+            <h3>Upload The File</h3>
+            <input type="file" id="fileInput" accept=".json" class="form-control my-3">
+            <input type="text" id="weekRange" placeholder="Enter Week (e.g., 01st Jan - 07th Jan)" class="form-control my-3">
+            <button id="applyWeek" class="btn btn-primary">Apply Week</button>
+            <button id="generatePlots" class="btn btn-success mt-3" style="display: none;">Generate Plots</button>
+            <button id="downloadPDF" class="btn btn-danger mt-3">Download PDF</button>
+
+            <div class="optimum-metrics">Optimum Standards:</div>
+
+            <div class="metric-box">
+                <h4>YouTube</h4>
+                <p>Requirement: Minimum 3-5 Hours/Week & No More Than 2 Days Delay + Metrics Review <br><br>
+                    Goal: Enhance Channel Focus + Quality + Coherence Through Review
+                </p>
+                <div id = "YouTube"></div>
+            </div>
+
+
+        </section>
+
+    
+        <div class="plots-container">
+
+            <section class="section full-width" id="plot7">
+                <h1>YouTube</h1>
+                <div id="plot7Div"></div>
+                <p style="font-weight: bold; font-size: 20px;">Specify:</p>
+                <div class="input-container">
+                    <label for="firstYouTube">A. Are You Aligned With Time Investment</label>
+                    <textarea id="firstYouTube" class="prompt-box" placeholder="Enter your response for alignment with time investment towards YouTube goals"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="secondYouTube">B. How/Why?</label>
+                    <textarea id="secondYouTube" class="prompt-box" placeholder="Explain why you're aligned or misaligned with your YouTube time investment"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="thirdYouTube">C. One Possible Thing, New or Continue To Make The Process Enjoyable</label>
+                    <textarea id="thirdYouTube" class="prompt-box" placeholder="Suggest an action or change to make the YouTube process more enjoyable"></textarea>
+                </div>
+                <p style="font-weight: bold; font-size: 20px;">+ Specify: The Idea/Focus/Possible Connection of YouTube For Next Week</p>
+                <div class="input-container">
+                    <label for="nextYouTubeFocus">The Idea/Focus/Possible Connection:</label>
+                    <textarea id="nextYouTubeFocus" class="prompt-box" placeholder="Describe your idea or focus for YouTube next week and how it connects to your goals"></textarea>
+                </div>
+            
+                <p style="font-weight: bold; font-size: 20px;">+ Specify: YouTube Studio Metrics</p>
+                <div class="input-container">
+                    <label for="thirdYouTube">Click Through Rate</label>
+                    <textarea id="thirdYouTube" class="prompt-box" placeholder="Evaluate your current click-through rate and strategies for improvement"></textarea>
+                </div>
+            
+                <div class="input-container">
+                    <label for="thirdYouTube">Best Performing Video + 'Short' Why</label>
+                    <textarea id="thirdYouTube" class="prompt-box" placeholder="Identify your best performing video and why it worked well (including Shorts if applicable)"></textarea>
+                </div>
+            
+                <div class="input-container">
+                    <label for="thirdYouTube">3 Key Traffic Sources</label>
+                    <textarea id="thirdYouTube" class="prompt-box" placeholder="List the top 3 sources of traffic to your YouTube channel and their effectiveness"></textarea>
+                </div>
+            
+                <div class="input-container">
+                    <label for="thirdYouTube">List 3 Key Recent Trends</label>
+                    <textarea id="thirdYouTube" class="prompt-box" placeholder="Identify 3 recent trends on YouTube relevant to your content or strategy"></textarea>
+                </div>
+            
+                <div class="input-container">
+                    <label for="thirdYouTube">Retention Rate For Recent Video + Why</label>
+                    <textarea id="thirdYouTube" class="prompt-box" placeholder="Analyze the retention rate for your most recent video and reasons behind its performance"></textarea>
+                </div>
+
+                <p style="font-weight: bold; font-size: 20px;">+ Specify: YouTube Metrics By A. Are You Aligned, B. What To Change/Sustain</p>
+                <div class="input-container">
+                    <label for="firstYouTube">The Content Packaging Overall</label>
+                    <textarea id="firstYouTube" class="prompt-box" placeholder="Evaluate your current content packaging for alignment with your YouTube strategy"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="secondYouTube">The Unique Value Proposition</label>
+                    <textarea id="secondYouTube" class="prompt-box" placeholder="Assess your unique value proposition and its effectiveness on YouTube"></textarea>
+                </div>
+                <div class="input-container">
+                    <label for="thirdYouTube">Coherence In Hooks + Content</label>
+                    <textarea id="thirdYouTube" class="prompt-box" placeholder="Reflect on the coherence of your hooks and content to improve viewer engagement"></textarea>
+                </div>
+            </section>
+            
+        
+        </div>
+        
+        
+
+
+    </div>   
+    
+    
+
+
+    <script>
+
+        // When the form is submitted
+        document.getElementById("dataForm").onsubmit = function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Collect form data
+            let formData = new FormData(event.target);
+
+            // Convert the form data to a plain object
+            let formDataObj = {};
+            formData.forEach((value, key) => {
+                formDataObj[key] = value;
+            });
+
+            // Convert the form data to a JSON string
+            let jsonData = JSON.stringify(formDataObj, null, 4);
+
+            // Display the JSON data in the output section
+            document.getElementById("jsonDisplay").textContent = jsonData;
+        };
+    </script>
+    
+
+    
+
+    <script>
+        
+        document.getElementById('downloadPDF').addEventListener('click', async () => {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            
+            const content = document.body; // Capture the entire page
+            const canvas = await html2canvas(content, {
+                scale: 2, // Adjust scaling factor for quality (higher = better quality, larger size)
+                useCORS: true // Ensures proper cross-origin handling
+            });
+            
+            const imgData = canvas.toDataURL('image/jpeg', 0.5); // Use JPEG and set quality to 0.7 (lower quality reduces size)
+
+            const imgWidth = 210; // A4 width in mm
+            const pageHeight = 297; // A4 height in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+
+            let position = 0;
+            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight); // Use JPEG format
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+    
+            const currentDate = new Date();
+            const formattedDate = currentDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            pdf.save(`Mahir LifeOS Report - ${formattedDate}.pdf`);
+
+        });
+
+    </script>
+
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+    // Get the required elements
+    const fileInput = document.getElementById("fileInput");
+    const generatePlotsButton = document.getElementById("generatePlots");
+    const applyWeekButton = document.getElementById("applyWeek");
+    const weekRangeInput = document.getElementById("weekRange");
+    const reportTitle = document.getElementById("reportTitle");
+
+    let jsonData = null; // Variable to store JSON data
+
+    // Check if elements exist
+    if (!fileInput || !generatePlotsButton || !applyWeekButton || !weekRangeInput || !reportTitle) {
+        console.error("One or more required elements are missing in the HTML.");
+        return;
+    }
+
+    // Handle file upload
+    fileInput.addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    jsonData = JSON.parse(reader.result); // Store the JSON data
+                    console.log("Loaded JSON:", jsonData); // Debugging log
+                    generatePlotsButton.style.display = "block"; // Show the "Generate Plots" button
+                } catch (error) {
+                    alert("Error parsing JSON file. Please check the file format.");
+                    console.error("JSON Parsing Error:", error);
+                }
+            };
+            reader.readAsText(file);
+        }
+    });
+
+    // Generate Plots
+    generatePlotsButton.addEventListener("click", () => {
+        if (!jsonData) {
+            alert("No data loaded. Please upload a JSON file.");
+            return;
+        }
+
+        // Parse and validate data
+        const metrics = {};
+        for (const [key, value] of Object.entries(jsonData)) {
+            metrics[key] = parseFloat(value) || 0; // Default to 0 if value is invalid
+        }
+
+        const {
+            total_time_in_yt = 0,
+            yt_time_last_week = 0,
+            yt_delayed_days = 0,
+            yt_delayed_days_last_week = 0,
+        } = metrics;
+
+        console.log("Metrics Parsed:", metrics); // Debugging log
+
+        // Ensure valid data before plotting
+        if (total_time_in_yt === 0 || yt_time_last_week === 0) {
+            alert("Insufficient data for plotting. Please check your JSON file.");
+            return;
+        }
+
+        // Update the plot7Div content
+        document.getElementById("plot7Div").innerHTML = 
+            `<h3>
+                <br><span style="
+                    background: linear-gradient(to right, #0069d9, #004085);
+                    color: #fff;
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                    font-weight: bold;
+                    display: inline;">
+                    YT Delayed Days This Week: ${(yt_delayed_days)} Days</span>
+                <br>
+                <br><span style="
+                    background: linear-gradient(to right, #dc3545, #8b0000);
+                    color: #fff;
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                    font-weight: bold;
+                    display: inline;">
+                    YT Delayed Days Last Week: ${(yt_delayed_days_last_week)} Days</span>
+                <br>
+                <br><span style = "
+                    background: linear-gradient(to right, #28a745, #1e7e34);
+                    color: #fff;
+                    padding: 2px 6px; /* Adjust padding to keep it compact */
+                    border-radius: 4px; /* Reduce border-radius for sleekness */
+                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                    font-weight: bold;
+                    display: inline;">YouTube Total Time Spent: ${(total_time_in_yt)} Hours</span>
+                <br>
+                <br><span style = "
+                    background: linear-gradient(to right, #28a745, #1e7e34);
+                    color: #fff;
+                    padding: 2px 6px; /* Adjust padding to keep it compact */
+                    border-radius: 4px; /* Reduce border-radius for sleekness */
+                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                    font-weight: bold;
+                    display: inline;">YouTube Total Time Spent Last Week Difference: ${(total_time_in_yt - yt_time_last_week)} Hours</span>
+
+            </h3>`;
+
+        // Plot the YouTube donut chart
+        const ytDonutData = [
+            {
+                labels: ["Current Week", "Last Week"],
+                values: [total_time_in_yt, yt_time_last_week],
+                type: "pie",
+                hole: 0.4,
+                marker: { colors: ["#1b56ae", "#ec1f1f"] },
+            },
+        ];
+
+        const ytDonutLayout = {
+            title: "YouTube Time Proportion",
+            annotations: [
+                {
+                    font: { size: 20 },
+                    showarrow: false,
+                    text: "YouTube",
+                    x: 0.5,
+                    y: 0.5,
+                },
+            ],
+            margin: { l: 0, r: 0, t: 40, b: 0 },
+            showlegend: true,
+            height: 400,
+            width: 400,
+        };
+
+        // Render the donut chart
+        Plotly.newPlot("plot7Div", ytDonutData, ytDonutLayout, { responsive: true });
+        console.log("Plot generated successfully.");
+    });
+
+    // Apply Week Range
+    applyWeekButton.addEventListener("click", () => {
+        const weekRange = weekRangeInput.value.trim(); // Get and trim input value
+        console.log("Week range: ", weekRange); // Debugging: Check value of weekRange
+        if (!weekRange) {
+            alert("Please enter a valid week range!");
+            return;
+        }
+
+        // Update the title with the week range
+        reportTitle.textContent = `Shahriyar Ahmed Mahir - LifeOS Weekly Report (${weekRange})`;
+        console.log(`Week range applied: ${weekRange}`); // Debugging log
+    });
+});
+
+    </script>
+
+
+
+    <script>
+         // The field data that will be collected
+        const fields = [
+            { id: 'total_time_in_yt', label: 'Total Time In YT:' , placeholder: 'Input Hours As Digits'},
+            { id: 'yt_time_last_week', label: 'YT Time from Last Week:' , placeholder: 'Input Hours As Digits'},
+            { id: 'yt_delayed_days', label: 'YT Delayed Days:' , placeholder: 'Input Days As Digits'},
+            { id: 'yt_delayed_days_last_week', label: 'YT Delayed Days Last Week:' , placeholder: 'Input Days As Digits'},
+
+        ];
+
+    
+                // Object to store the data progressively
+        let formDataObj = {};
+
+        // Current field index
+        let currentFieldIndex = 0;
+
+        // Function to display the current field
+        function displayField() {
+            const currentField = fields[currentFieldIndex];
+            const fieldSection = document.getElementById('fieldSection');
+            fieldSection.innerHTML = `
+                <label for="${currentField.id}">${currentField.label}</label>
+                <input type="text" id="${currentField.id}" name="${currentField.id}"
+                placeholder="Enter ${currentField.placeholder}">
+            `;
+            document.getElementById(`${currentField.id}`).focus(); // Focus on the new input field
+        }
+
+        // Function to handle form submission
+        document.getElementById("dataForm").onsubmit = function(event) {
+            event.preventDefault();
+
+            const currentField = fields[currentFieldIndex];
+
+            // Get the value entered for the current field
+            const fieldValue = document.getElementById(currentField.id).value.trim();
+
+            // Save the value in the formData object if valid
+            if (fieldValue) {
+                formDataObj[currentField.id] = fieldValue;
+            } else {
+                alert("Please enter a valid value.");
+                return;
+            }
+
+            // Convert the form data to a JSON string and display it
+            const jsonData = JSON.stringify(formDataObj, null, 4);
+            document.getElementById("jsonDisplay").textContent = jsonData;
+
+            // Move to the next field
+            currentFieldIndex++;
+
+            // If there are more fields, display the next one
+            if (currentFieldIndex < fields.length) {
+                displayField();
+            } else {
+                // All fields have been submitted
+                document.getElementById("fieldSection").innerHTML = "<p>All data collected! Thank you!</p>";
+
+                // Hide only the Submit button
+                const submitButton = document.querySelector("button[type='submit']");
+                if (submitButton) submitButton.style.display = "none";
+
+                // Ensure the Download JSON button remains visible
+                const downloadButton = document.getElementById("downloadJson");
+                if (downloadButton) downloadButton.style.display = "inline-block";
+            }
+        };
+
+        // Display the first field when the page loads
+        window.onload = displayField;
+
+
+        document.getElementById("downloadJson").addEventListener("click", () => {
+            if (Object.keys(formDataObj).length === 0) {
+                alert("No data to download. Please complete the form first.");
+                return;
+            }
+
+            const jsonData = JSON.stringify(formDataObj, null, 4);
+            const blob = new Blob([jsonData], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+
+            const currentDate = new Date();
+            const formattedDate = currentDate.toISOString().split('T')[0];
+            a.href = url;
+            a.download = `mahir_lifeos_${formattedDate}.json`;
+            a.click();
+
+            URL.revokeObjectURL(url);
+
+            URL.revokeObjectURL(url); // Clean up the URL object
+
+            // Hide the Enter Your Data and JSON Output sections
+            const inputSection = document.getElementById("inputSection");
+            const outputSection = document.getElementById("outputSection");
+            if (inputSection) inputSection.style.display = "none";
+            if (outputSection) outputSection.style.display = "none";
+
+            // Optional: Add a success message after hiding the sections
+            const successMessage = document.createElement("div");
+            successMessage.textContent = "Download completed! Thank you for using the form.";
+            successMessage.style.color = "green";
+            successMessage.style.textAlign = "center";
+            successMessage.style.marginTop = "20px";
+            document.body.appendChild(successMessage);
+        });
+    </script>
+
+    
+</body>
+</html>
+
+
+
+
+
